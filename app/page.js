@@ -1,8 +1,8 @@
 "use client";
-import { useState, useRef } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useRef,useContext} from 'react';
+import { usePathname, useRouter, useSearchParams  } from 'next/navigation';
 import { Container, TextField, Button, Typography, Grid, Snackbar, CircularProgress } from '@mui/material';
-
+import { GlobalContext } from '../contexts/GlobalContext';
 /**
  * @description: 로그인을 위한 화면.
  * @function cm0101mq0
@@ -20,17 +20,24 @@ import { Container, TextField, Button, Typography, Grid, Snackbar, CircularProgr
  */
 const LoginPage = () => {
   const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [connectHash, setConnectHash] = useState('');
+
   const [openAlert, setOpenAlert] = useState(false);
-  const [alertMessage, setAlertMessage] = useState('이메일과 비밀번호를 입력해주세요.');
+  const [alertMessage, setAlertMessage] = useState('이메일과 비밀번호를 입력해주세요.!');
   const emailRef = useRef(null); // 참조 생성
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+  const { globalState, setGlobalState } = useContext(GlobalContext);
 
-  const handleLogin = async () => {
+  const handleLogin = async (env) => {
     setIsLoading(true); // 로딩 상태 시작
-
+    console.log("========================env====================",env);
+    console.log("========================email====",email);
+    console.log("========================password====",password);
     // 이메일과 비밀번호가 입력되었는지 확인
     if (!email || !password) {
       setAlertMessage("이메일과 비밀번호를 입력해주세요.");
@@ -82,15 +89,49 @@ const LoginPage = () => {
       });
       console.log("res: ");
       console.log(res);
+      console.log("========================connectHash====================");
+      console.log(res.connectHash);
+      setConnectHash(res.connectHash);
+      setGlobalState((prevState) => ({
+        ...prevState,
+        user: { name: 'teest user', email: email , useHashCode: res.connectHash},
+      }));
     // 실패 시 실행할 부분
-    if (!res ||res === 0 || res.message !== null) {
-      //setAlertMessage(res.message);
+    if (!res ||res === 0 || res.errMessage != null || !res.connectHash) {
+      console.log("========================res.errMessage =======error in=============");
+      setAlertMessage(res.errMessage);
       setOpenAlert(true);
       emailRef.current.focus(); // 포커스 이동
       return;
     }
+    console.log("========================res.errMessage =1==2=======43==========",res.errMessage );
+    // router.push('/main');
+    console.log('Routing to:', '/main', 'with query:', { connectHash: res.connectHash });
+    router.push('/main?connectHash='+res.connectHash);
+    //아래방식은 이제 못써!!!!!!!!!!!!!!!!우씨
+    // try {
+    //   // 성공적으로 로그인 처리 후 메인 페이지로 라우팅
+    //   // await router.push('/main');
+    //   await router.push({
+    //     pathname: '/main',
+    //     query: { connectHash: res.connectHash  }
+    //   });
+    //   console.log('Routing to main page');
+    // } catch (error) {
+    //   console.error('Failed to navigate:', error);
+    // }
 
-    router.push('/main');
+  // Inside your function
+  // try {
+  //   const navigationResult = await router.push({
+  //     pathname: '/main',
+  //     query: { connectHash: res.connectHash }
+  //   });
+  //   console.log('Navigation success:', navigationResult);
+  // } catch (error) {
+  //   console.error('Failed to navigate:', error);
+  // }
+
   };
 
   const handleCloseAlert = () => {
@@ -121,7 +162,8 @@ const LoginPage = () => {
               margin="normal"
               value={email}
               inputRef={emailRef}
-              onChange={(e) => setEmail(e.target.value)}
+               onChange={(e) => setEmail(e.target.value)}
+              // onChange={(e) => console.log(e.target.value)}
             />
           </Grid>
           <Grid item xs={12}>
@@ -133,6 +175,7 @@ const LoginPage = () => {
               margin="normal"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              // onChange={(e) => console.log(e.target.value)}
             />
           </Grid>
           <Grid item xs={12}>
@@ -153,8 +196,8 @@ const LoginPage = () => {
           onClose={handleCloseAlert}
           message={alertMessage}
           anchorOrigin={{
-            vertical: 'bottom',
-            horizontal: 'center',
+          vertical: 'bottom',
+          horizontal: 'center',
           }}
         />
       </Container>
