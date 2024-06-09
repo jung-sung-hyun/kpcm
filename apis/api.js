@@ -1,4 +1,7 @@
-export const fetcher = async (url, param) => {
+export const fetcher = async (url, param, router) => {
+  console.log("api 호출 url: ", url);
+  console.log("api 호출 param: ", param);
+
   try {
     const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/${url}`, {
       method: 'POST',
@@ -9,24 +12,18 @@ export const fetcher = async (url, param) => {
       body: JSON.stringify(param),
     });
 
-    /*
-    if (!res.ok) {
-      throw new Error('Network response was not ok ' + res.statusText);
-    }
-    */
-    
     if (res.status === 200) {
-       const data = await res.json();
-       return data;
+      const data = await res.json();
+      return data;
     } else if (res.status === 400) {
-      console.log('Authentication failed');
-      router.push('../app/exception/400error');
+      console.log('400 Error');
+      router.push('../app/common/(exception)/400error');
     } else if (res.status === 500 || res.status === 501) {
-      console.log('Authentication failed');
-      router.push('../app/exception/500error');
+      console.log('500, 501 Error');
+      router.push('../app/common/(exception)/400error');
     } else {
       console.log('ETC failed');
-      router.push('../app/exception/network-error');
+      router.push('../app/common/(exception)/network-error');
     }
   } catch (error) {
     console.error('Error: ', error);

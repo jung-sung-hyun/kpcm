@@ -1,8 +1,10 @@
 "use client";
-import { useState, useRef,useContext} from 'react';
+import { useState, useRef, useContext} from 'react';
 import { usePathname, useRouter, useSearchParams  } from 'next/navigation';
 import { Container, TextField, Button, Typography, Grid, Snackbar, CircularProgress } from '@mui/material';
 import { GlobalContext } from '../contexts/GlobalContext';
+import { fetcher } from '@apis/api';
+
 /**
  * @description: 로그인을 위한 화면.
  * @function cm0101mq0
@@ -45,93 +47,33 @@ const LoginPage = () => {
       return;
     }
 
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/cm/cmsc01020000/select00`, {
-      cache: 'no-store',
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ mbrEmlAddr: email, userPswd: password })
-    })
-      .then((response) => {
-        console.log("response:",response);
-        console.log("response code: ", response.status);
-        setIsLoading(false);
-        if (response.status === 200) {
-          console.log('Authentication success');
-          return response.json();
-        } else if (response.status === 400) {
-          console.log('Authentication failed');
-          router.push('/exception/400error');
-        } else if (response.status === 500 || response.status === 501) {
-          console.log("response:","500 error: ");
-          console.log(response);
-          console.log("response code: ", response.status);
-
-          console.log('Authentication failed');
-          return response.json().then(err => { setAlertMessage(err.errorMessage); });
-          //setAlertMessage(res.message);
-          //router.push('/exception/500error');
-        } else {
-          // 기타 상태 코드
-          router.push('/exception/network-error');
-        }
-      })
-      .then((result) => {
-        setIsLoading(false);
-        // 성공 시 실행할 부분
-        return result;
-      })
-      .catch((err) => {
-        setIsLoading(false);
-        // 인터넷 문제로 실패 시 실행할 부분
-        console.log("err: ", err);
-      });
-      console.log("res: ");
-      console.log(res);
-      console.log("========================connectHash====================");
-      console.log(res.connectHash);
+    try {
+      const res = await fetcher('cm/cmsc01020000/select00', { mbrEmlAddr: email, userPswd: password }, router);
+      console.log('Authentication success', res);
+      // 성공 시 실행할 추가 작업
+      setIsLoading(false);
+      console.log("========================connectHash====================: ", res.connectHash);
       setConnectHash(res.connectHash);
       setGlobalState((prevState) => ({
         ...prevState,
         user: { name: 'test user', email: email , useHashCode: res.connectHash},
       }));
-    // 실패 시 실행할 부분
-    if (!res ||res === 0 || res.errMessage != null || !res.connectHash) {
-      console.log("========================res.errMessage =======error in=============");
-      setAlertMessage(res.errMessage);
-      setOpenAlert(true);
-      emailRef.current.focus(); // 포커스 이동
-      return;
+      console.log('Routing to:', '/main', 'with query:', { connectHash: res.connectHash });
+      router.push('/main?connectHash='+res.connectHash);
+    } catch (err) {
+      // 실패 시 실행할 부분
+      console.error("err: ", err);
+      setAlertMessage(err.message);
+      setIsLoading(false);
+      if (!res ||res === 0 || res.errMessage != null || !res.connectHash) {
+        console.log("========================res.errMessage =======error in=============");
+        setAlertMessage(res.errMessage);
+        setOpenAlert(true);
+        emailRef.current.focus(); // 포커스 이동
+        console.log("========================res.errMessage =1==2=======43==========",res.errMessage );
+        return;
+      }
     }
-    console.log("========================res.errMessage =1==2=======43==========",res.errMessage );
-    // router.push('/main');
-    console.log('Routing to:', '/main', 'with query:', { connectHash: res.connectHash });
-    router.push('/main?connectHash='+res.connectHash);
-    //아래방식은 이제 못써!!!!!!!!!!!!!!!!우씨
-    // try {
-    //   // 성공적으로 로그인 처리 후 메인 페이지로 라우팅
-    //   // await router.push('/main');
-    //   await router.push({
-    //     pathname: '/main',
-    //     query: { connectHash: res.connectHash  }
-    //   });
-    //   console.log('Routing to main page');
-    // } catch (error) {
-    //   console.error('Failed to navigate:', error);
-    // }
-
-  // Inside your function
-  // try {
-  //   const navigationResult = await router.push({
-  //     pathname: '/main',
-  //     query: { connectHash: res.connectHash }
-  //   });
-  //   console.log('Navigation success:', navigationResult);
-  // } catch (error) {
-  //   console.error('Failed to navigate:', error);
-  // }
-
   };
 
   const handleCloseAlert = () => {

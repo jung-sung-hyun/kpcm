@@ -1,16 +1,8 @@
 // pages/404.js
 "use client";
-import React from 'react';
 import { Container, Typography, Button, Box } from '@mui/material';
-import { useRouter } from 'next/navigation';
 
 const Processing = () => {
-  const router = useRouter();
-
-  const handleBackToHome = () => {
-    router.push('/');
-  };
-
   return (
     <Container
       sx={{

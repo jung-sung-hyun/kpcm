@@ -21,7 +21,6 @@ import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import NestedList from '../../../../components/NestedList'; // NestedList 컴포넌트를 임포트합니다.
-import MDITabs from './mdi_tab';
 import { useSearchParams } from "next/navigation";
 // TODO remove, this demo shouldn't need to reset the theme.
 const defaultTheme = createTheme();
@@ -239,7 +238,6 @@ export default function Dashboard(props) {
                     height: 240,
                   }}
                 >
-              <MDITabs />
                 </Paper>
               </Grid>
               <Grid item xs={12} md={4} lg={3}>
