@@ -1,6 +1,5 @@
 "use client";
 import { useState } from 'react';
-import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 import Checkbox from '@mui/material/Checkbox';
 import Input from '@mui/material/Input';
@@ -8,7 +7,6 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import Button from '@mui/material/Button';
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
-import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
 import Select from '@mui/material/Select';
@@ -18,13 +16,6 @@ import CircularProgress from '@mui/material/CircularProgress';
 import Modal from '@mui/material/Modal';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import Button from '@mui/material/Button';
-import Popover from '@mui/material/Popover';
-
-
-export const CustomTextField = ({ label, value, onChange }) => (
-  <TextField label={label} value={value} onChange={onChange} fullWidth />
-);
 
 export const CustomAutocomplete = ({ options, value, onChange, label }) => (
   <Autocomplete
@@ -107,63 +98,3 @@ export const CustomModal = ({ open, onClose, children, title }) => (
     </Box>
   </Modal>
 );
-
-// Custom Popover
-export const CustomPopover = ({ open, anchorEl, onClose, title, children }) => (
-  <Popover
-    open={open}
-    anchorEl={anchorEl}
-    onClose={onClose}
-    anchorOrigin={{
-      vertical: 'bottom',
-      horizontal: 'center',
-    }}
-    transformOrigin={{
-      vertical: 'top',
-      horizontal: 'center',
-    }}
-  >
-    <Box sx={{ p: 2 }}>
-      <Typography variant="h6" component="h2">
-        {title}
-      </Typography>
-      {children}
-    </Box>
-  </Popover>
-);
-// "use client";
-
-// import { useState } from 'react';
-// import TextField from '@mui/material/TextField';
-// import MenuItem from '@mui/material/MenuItem';
-
-// const ComboBox = ({ label, options, defaultValue, onChange }) => {
-//   const [value, setValue] = useState(defaultValue);
-
-//   const handleChange = (event) => {
-//     const newValue = event.target.value;
-//     setValue(newValue);
-//     if (onChange) {
-//       onChange(newValue);
-//     }
-//   };
-
-//   return (
-//     <TextField
-//       select
-//       label={label}
-//       value={value}
-//       onChange={handleChange}
-//       fullWidth
-//     >
-//       {options.map((option) => (
-//         <MenuItem key={option.value} value={option.value}>
-//           {option.label}
-//         </MenuItem>
-//       ))}
-//     </TextField>
-//   );
-// };
-
-// export default ComboBox;
-

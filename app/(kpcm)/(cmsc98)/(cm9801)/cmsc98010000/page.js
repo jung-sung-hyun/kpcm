@@ -1,9 +1,14 @@
 "use client";
 import { useEffect, useState } from 'react';
-import { Box, Button, Container, Grid, MenuItem, Select, TextField, Typography, Modal, Popover  } from '@mui/material';
+import { Box, Button, Grid, MenuItem, Select, Typography, Modal  } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
-import Autocomplete from '@mui/material/Autocomplete';
-import SearchIcon from '@mui/icons-material/Search';
+import CustomTextField from '@components/TextFieldComponent/CustomTextField';
+import CustomPopover from '@components/PopoverComponent/CustomPopover';
+import CustomContainer from '@components/ContainerComponent/CustomContainer';
+import CustomBox from '@components/BoxComponent/CustomBox';
+import CustomButton from '@components/ButtonComponent/CustomButton';
+import CustomModal from '@components/ModalComponent/CustomModal';
+import CustomAutocomplete from '@components/AutocompleteComponent/CustomAutocomplete';
 
 // 공통코드 불러오기
 import { getCommonCode } from '../../../../../utils/common';
@@ -101,51 +106,37 @@ export default function Sys28010({ searchParams }) {
   };
 
   const handleSearch = () => {
-    // Add search logic here
     console.log('Search clicked');
 	};
 
 	return (
-    <Container>
-      <Popover
+    <CustomContainer>
+      <CustomPopover
         open={openPopover}
         anchorEl={anchorEl}
         onClose={handlePopoverClose}
-        anchorOrigin={{
-          vertical: 'center',
-          horizontal: 'center',
-        }}
-        transformOrigin={{
-          vertical: 'top',
-          horizontal: 'center',
-        }}
       >
-        <Box sx={{ p: 2,
-  display: 'flex',
-  flexDirection: 'column',
-  gap: 2,}}>
+        <CustomBox>
           <Typography variant="h6" component="h2">
             오류메시지 코드 변경
           </Typography>
-          <TextField label="Input 1" variant="outlined" />
-          <TextField label="Input 2" variant="outlined" />
-          <TextField label="Input 3" variant="outlined" />
+          <CustomTextField label="Input 1" variant="outlined" />
+          <CustomTextField label="Input 2" variant="outlined" />
+          <CustomTextField label="Input 3" variant="outlined" />
           <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
-            <Button variant="contained" color="primary">
+            <CustomButton variant="contained" color="primary">
               적용
-            </Button>
-            <Button variant="outlined" color="secondary" onClick={handlePopoverClose}>
+            </CustomButton>
+            <CustomButton variant="outlined" color="secondary" onClick={handlePopoverClose}>
               취소
-            </Button>
+            </CustomButton>
           </Box>
-        </Box>
-      </Popover>
+        </CustomBox>
+      </CustomPopover>
 
-      <Modal
+      <CustomModal
         open={openModal}
         onClose={handleCloseModal}
-        aria-labelledby="modal-title"
-        aria-describedby="modal-description"
       >
         <Box
           sx={{
@@ -166,19 +157,19 @@ export default function Sys28010({ searchParams }) {
           <Typography id="modal-title" variant="h6" component="h2">
             오류메시지 코드 등록
           </Typography>
-          <TextField label="오류메시지 코드아이디" variant="outlined" />
-          <TextField label="오류메시지 코드명" variant="outlined" />
-          <TextField label="설명" variant="outlined" />
+          <CustomTextField label="오류메시지 코드아이디" variant="outlined" />
+          <CustomTextField label="오류메시지 코드명" variant="outlined" />
+          <CustomTextField label="설명" variant="outlined" />
           <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
-            <Button variant="contained" color="primary">
+            <CustomButton variant="contained" color="primary">
               등록
-            </Button>
-            <Button variant="outlined" color="secondary" onClick={handleCloseModal}>
+            </CustomButton>
+            <CustomButton variant="outlined" color="secondary" onClick={handleCloseModal}>
               취소
-            </Button>
+            </CustomButton>
           </Box>
         </Box>
-      </Modal>
+      </CustomModal>
        <Typography
         variant="h4"
         gutterBottom
@@ -191,12 +182,12 @@ export default function Sys28010({ searchParams }) {
 				{ menuName}
       </Typography>
       <Box component="form" sx={{ mb: 4 }}>
-        <Grid container spacing={2}>
+        <Grid CustomContainer spacing={2}>
           <Grid item xs={10} sm={4} md={2}>
-            <TextField label="오류메시지 코드아이디" variant="outlined" fullWidth />
+            <CustomTextField label="오류메시지 코드아이디" variant="outlined" fullWidth />
           </Grid>
           <Grid item xs={12} sm={6} md={3}>
-            <TextField
+            <CustomTextField
               label="오류메시지 코드명"
               variant="outlined"
               fullWidth
@@ -205,14 +196,11 @@ export default function Sys28010({ searchParams }) {
             />
           </Grid>
           <Grid item xs={12} sm={6} md={3}>
-            <Autocomplete
+            <CustomAutocomplete
               options={dataList}
               value={selectedSampleCode}
               onChange={handleCodeChange}
-              popupIcon={<SearchIcon />}
-              renderInput={(params) => (
-                <TextField {...params} label="오토컴플릿 샘플" variant="outlined" fullWidth />
-              )}
+              label="오토컴플릿 샘플"
             />
           </Grid>
           <Grid item xs={12} sm={6} md={3}>
@@ -231,17 +219,17 @@ export default function Sys28010({ searchParams }) {
             </Select>
           </Grid>
           <Grid item xs={12} sm={6} md={3}>
-            <Button
+            <CustomButton
               variant="contained"
               color="primary"
               fullWidth
               onClick={handleSearch}
             >
               조회
-						</Button>
+						</CustomButton>
 					</Grid>
 					<Grid item xs={12} sm={6} md={3}>
-            <Button
+            <CustomButton
               variant="contained"
               color="secondary"
               fullWidth
@@ -249,17 +237,17 @@ export default function Sys28010({ searchParams }) {
 
             >
               등록
-						</Button>
+						</CustomButton>
 					</Grid>
 					<Grid item xs={12} sm={6} md={3}>
-            <Button
+            <CustomButton
               variant="contained"
               color="warning"
               fullWidth
                onClick={handlePopoverOpen}
             >
               변경
-						</Button>
+						</CustomButton>
           </Grid>
         </Grid>
       </Box>
@@ -273,6 +261,6 @@ export default function Sys28010({ searchParams }) {
           disableSelectionOnClick
         />
       </Box>
-    </Container>
+    </CustomContainer>
   );
 }
