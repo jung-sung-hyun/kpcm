@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 "use client";
 import React, { useEffect, useState } from 'react';
 import { styled, createTheme, ThemeProvider } from '@mui/material/styles';
@@ -25,6 +26,8 @@ import MDITabs from './mdi_tab';
 import { useSearchParams } from "next/navigation";
 // TODO remove, this demo shouldn't need to reset the theme.
 const defaultTheme = createTheme();
+=======
+>>>>>>> f8bc43ef24249fb44a94a1f5830809baade8d01a
 /**
  * @description: main contents 에대한 dashboard이다.
  * @function cm0101mq0
@@ -40,6 +43,7 @@ const defaultTheme = createTheme();
  *   2024.05.16       홍길동                     Method 수정및 추가작업
  * ========================================================================================================
  */
+<<<<<<< HEAD
 function Copyright(props) {
   return (
     <Typography variant="body2" color="text.secondary" align="center" {...props}>
@@ -262,5 +266,10 @@ export default function Dashboard(props) {
         </Box>
       </Box>
     </ThemeProvider>
+=======
+export default function Dashboard() {
+  return (
+    <>박대철님 안녕하세요.</>
+>>>>>>> f8bc43ef24249fb44a94a1f5830809baade8d01a
   );
 }

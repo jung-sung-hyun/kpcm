@@ -1,4 +1,7 @@
+<<<<<<< HEAD
 // pages/404.js
+=======
+>>>>>>> f8bc43ef24249fb44a94a1f5830809baade8d01a
 "use client";
 import React from 'react';
 import { Container, Typography, Button, Box } from '@mui/material';
@@ -8,7 +11,15 @@ const Custom404 = () => {
   const router = useRouter();
 
   const handleBackToHome = () => {
+<<<<<<< HEAD
     router.push('/');
+=======
+    router.push('/main');
+  };
+
+  const handleBackToPrevious = () => {
+    router.back();
+>>>>>>> f8bc43ef24249fb44a94a1f5830809baade8d01a
   };
 
   return (
@@ -26,6 +37,7 @@ const Custom404 = () => {
         페이지를 찾을 수 없어요.
       </Typography>
       <Typography variant="h6" component="h2" gutterBottom>
+<<<<<<< HEAD
 				접속하려는 페이지가 <br/>삭제 또는 변경되었거나, 일시적으로 사용이 <br/>중단되었어요.
 				<br/>링크정보, 접근 권한 등을 다시 한번 확인해주세요.
 			</Typography>
@@ -36,6 +48,18 @@ const Custom404 = () => {
 			</Typography>
 			<Box sx={{ display: 'flex', gap: 2, mt: 2 }}>
         <Button variant="outlined" color="primary" onClick={handleBackToHome}>
+=======
+        접속하려는 페이지가 <br/>삭제 또는 변경되었거나, 일시적으로 사용이 <br/>중단되었어요.
+        <br/>링크정보, 접근 권한 등을 다시 한번 확인해주세요.
+      </Typography>
+      <br/>
+      <Typography variant="body1" gutterBottom>
+        고객센터 <br/>
+        전화문의 010-8525-0152(평일 9시 ~ 18시)
+      </Typography>
+      <Box sx={{ display: 'flex', gap: 2, mt: 2 }}>
+        <Button variant="outlined" color="primary" onClick={handleBackToPrevious}>
+>>>>>>> f8bc43ef24249fb44a94a1f5830809baade8d01a
           이전
         </Button>
         <Button variant="contained" color="primary" onClick={handleBackToHome}>
