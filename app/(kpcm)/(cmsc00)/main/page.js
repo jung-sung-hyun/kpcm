@@ -1,11 +1,12 @@
 "use client";
-import * as React from 'react';
+import React, { useEffect, useState } from 'react';
 import { styled, createTheme, ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import MuiDrawer from '@mui/material/Drawer';
 import Box from '@mui/material/Box';
 import MuiAppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
+import Button from '@mui/material/Button';
 import List from '@mui/material/List';
 import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
@@ -16,10 +17,12 @@ import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
 import Link from '@mui/material/Link';
 // import { mainListItems, secondaryListItems } from '../../../../components/listitem';
-import { NestedList } from '../../../../components/listitem';
 import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import NotificationsIcon from '@mui/icons-material/Notifications';
+import NestedList from '../../../../components/NestedList'; // NestedList 컴포넌트를 임포트합니다.
+import MDITabs from './mdi_tab';
+import { useSearchParams } from "next/navigation";
 // TODO remove, this demo shouldn't need to reset the theme.
 const defaultTheme = createTheme();
 /**
@@ -42,7 +45,7 @@ function Copyright(props) {
     <Typography variant="body2" color="text.secondary" align="center" {...props}>
       {'Copyright © '}
       <Link color="inherit" href="https://mui.com/">
-        Your Website
+      KOMSCO Nation Wide Payment Platform
       </Link>{' '}
       {new Date().getFullYear()}
       {'.'}
@@ -50,7 +53,7 @@ function Copyright(props) {
   );
 }
 
-const drawerWidth = 240;
+const drawerWidth = 340;
 
 const AppBar = styled(MuiAppBar, {
   shouldForwardProp: (prop) => prop !== 'open',
@@ -96,10 +99,54 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
   }),
 );
 
-export default function Dashboard() {
+export default function Dashboard(props) {
+  const searchParams = useSearchParams();
+  const getConnectHash = searchParams.get("connectHash");
+  console.log("========================getConnectHash====================");
+  console.log(getConnectHash);
+  console.log("========================getConnectHash====================");
+
   const [open, setOpen] = React.useState(true);
+  // const [upMenuId, setUpMenuId] = React.useState("");
+  const [selectMenuList   , setSelectMenuList   ] = React.useState([]);
   const toggleDrawer = () => {
     setOpen(!open);
+  };
+
+  async function handleSystemCommonClick(props) {
+    const param = {upMenuId:props,connectHash:getConnectHash};
+    const res = await  fetch(`${process.env.NEXT_PUBLIC_API_URL}/cm/cmsc01030000/selectList00`,{
+      method : 'POST',
+      cache:'no-store',
+      headers : {
+          'Content-Type' : 'application/json',
+      },
+      data: JSON.stringify(param),
+      body : JSON.stringify({
+        upMenuId : props,
+        connectHash:getConnectHash
+      })
+    })
+    .then((response) => {
+      if(response.status === 200){
+        return response.json();
+        //return response.text();
+      }else {
+        // 서버 에러 코드 전송 시 실행할 부분
+      }
+    })
+    .then((result) => {
+      // 성공 시 실행할 부분
+      return result;
+    })
+    .catch((err) => {
+      // 인터넷 문제로 실패 시 실행할 부분
+      console.log(err);
+    });
+    console.log("========================res====================");
+    console.log(res);
+    console.log("========================res====================");
+    setSelectMenuList(res.dataList);
   };
 
   return (
@@ -124,7 +171,8 @@ export default function Dashboard() {
             >
               <MenuIcon />
             </IconButton>
-            <Typography
+
+            {/* <Typography
               component="h1"
               variant="h6"
               color="inherit"
@@ -132,13 +180,17 @@ export default function Dashboard() {
               sx={{ flexGrow: 1 }}
             >
               메인화면
-            </Typography>
+            </Typography> */}
+            <Button onClick={() => handleSystemCommonClick("00000000000000000001")} color="inherit" sx={{ justifyContent: 'flex-start' }}>[시스템공통]</Button>
+            <Button onClick={() => handleSystemCommonClick("00000000000000000003")} color="inherit" sx={{ justifyContent: 'flex-start' }}>[시스템관리]</Button>
             <IconButton color="inherit">
               <Badge badgeContent={4} color="secondary">
                 <NotificationsIcon />
               </Badge>
             </IconButton>
+            <Button  href="/" color="inherit">로그아웃</Button>
           </Toolbar>
+
         </AppBar>
         <Drawer variant="permanent" open={open}>
           <Toolbar
@@ -159,6 +211,7 @@ export default function Dashboard() {
             <Divider sx={{ my: 1 }} />
             {/* {secondaryListItems} */}
           </List>
+        <NestedList selectMenuList={selectMenuList} />
         </Drawer>
 
         <Box
@@ -185,6 +238,7 @@ export default function Dashboard() {
                     height: 240,
                   }}
                 >
+              <MDITabs />
                 </Paper>
               </Grid>
               <Grid item xs={12} md={4} lg={3}>
