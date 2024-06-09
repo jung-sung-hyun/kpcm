@@ -16,9 +16,10 @@ import Grid from '@mui/material/Grid';
 import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import NotificationsIcon from '@mui/icons-material/Notifications';
-import NestedList from '../../components/NestedList'; 
+import NestedList from '../../components/NestedList';
 import { Tabs, Tab, Typography } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
+import { useSearchParams } from "next/navigation";
 
 const drawerWidth = 300;
 
@@ -80,6 +81,14 @@ function LinkTab(props) {
 }
 
 export default function Layout({ children }) {
+
+  const searchParams = useSearchParams();
+  const getConnectHash = searchParams.get("connectHash");
+  console.log("=============handleSystemCommonClick===========getConnectHash====================");
+  console.log(getConnectHash);
+  console.log("========================getConnectHash====================");
+
+
   const [open, setOpen] = useState(true);
   const [selectMenuList, setSelectMenuList] = useState([]);
   const [tabs, setTabs] = useState([]);
@@ -118,12 +127,9 @@ export default function Layout({ children }) {
     }
   };
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
   async function handleSystemCommonClick(props) {
-    const param = {upMenuId:props};
+
+    const param = {upMenuId:props, connectHash:getConnectHash};
     const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/cm/cmsc01030000/selectList00`,{
       method : 'POST',
       cache:'no-store',
@@ -132,7 +138,7 @@ export default function Layout({ children }) {
       },
       data: JSON.stringify(param),
       body : JSON.stringify({
-        upMenuId : props,
+        upMenuId : props,connectHash: getConnectHash
       })
     })
     .then((response) => {
@@ -148,9 +154,17 @@ export default function Layout({ children }) {
     .catch((err) => {
       console.log(err);
     });
-
-    setSelectMenuList(res);
+    if (!res ||res === 0 || res.errMessage != null || !res.connectHash) {
+      console.log("========================res.errMessage=>>:{}",res.errMessage);
+      return;
+    }
+    setSelectMenuList(res.dataList);
   }
+
+  useEffect(() => {
+    setMounted(true);
+    handleSystemCommonClick("00000000000000000000");
+  }, []);
 
   return (mounted &&
     <Box sx={{ display: 'flex' }}>
@@ -199,8 +213,8 @@ export default function Layout({ children }) {
         <Divider />
 
         {/* 메뉴리스트 */}
-        <Button onClick={() => handleSystemCommonClick("00000000000000000001")} color="inherit" sx={{ justifyContent: 'flex-start' }}>[시스템공통]</Button>
-        <Button onClick={() => handleSystemCommonClick("00000000000000000003")} color="inherit" sx={{ justifyContent: 'flex-start' }}>[시스템관리]</Button>
+        {/* <Button onClick={() => handleSystemCommonClick("00000000000000000001")} color="inherit" sx={{ justifyContent: 'flex-start' }}>[시스템공통]</Button>
+        <Button onClick={() => handleSystemCommonClick("00000000000000000003")} color="inherit" sx={{ justifyContent: 'flex-start' }}>[시스템관리]</Button> */}
         <NestedList selectMenuList={selectMenuList} onMenuClick={handleMenuClick} />
       </Drawer>
 

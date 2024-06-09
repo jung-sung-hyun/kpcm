@@ -102,10 +102,6 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 export default function Dashboard(props) {
   const searchParams = useSearchParams();
   const getConnectHash = searchParams.get("connectHash");
-  console.log("========================getConnectHash====================");
-  console.log(getConnectHash);
-  console.log("========================getConnectHash====================");
-
   const [open, setOpen] = React.useState(true);
   // const [upMenuId, setUpMenuId] = React.useState("");
   const [selectMenuList   , setSelectMenuList   ] = React.useState([]);
@@ -114,6 +110,11 @@ export default function Dashboard(props) {
   };
 
   async function handleSystemCommonClick(props) {
+    console.log("=============handleSystemCommonClick===========getConnectHash====================");
+    console.log(getConnectHash);
+    console.log("========================getConnectHash====================");
+
+
     const param = {upMenuId:props,connectHash:getConnectHash};
     const res = await  fetch(`${process.env.NEXT_PUBLIC_API_URL}/cm/cmsc01030000/selectList00`,{
       method : 'POST',
@@ -181,8 +182,8 @@ export default function Dashboard(props) {
             >
               메인화면
             </Typography> */}
-            <Button onClick={() => handleSystemCommonClick("00000000000000000001")} color="inherit" sx={{ justifyContent: 'flex-start' }}>[시스템공통]</Button>
-            <Button onClick={() => handleSystemCommonClick("00000000000000000003")} color="inherit" sx={{ justifyContent: 'flex-start' }}>[시스템관리]</Button>
+            <Button onClick={() => handleSystemCommonClick("00000000000000000001")} color="inherit" sx={{ justifyContent: 'flex-start' }}>[-시스템 공통-]</Button>
+            <Button onClick={() => handleSystemCommonClick("00000000000000000003")} color="inherit" sx={{ justifyContent: 'flex-start' }}>[-시스템 관리-]</Button>
             <IconButton color="inherit">
               <Badge badgeContent={4} color="secondary">
                 <NotificationsIcon />

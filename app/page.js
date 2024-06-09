@@ -94,7 +94,7 @@ const LoginPage = () => {
       setConnectHash(res.connectHash);
       setGlobalState((prevState) => ({
         ...prevState,
-        user: { name: 'teest user', email: email , useHashCode: res.connectHash},
+        user: { name: 'test user', email: email , useHashCode: res.connectHash},
       }));
     // 실패 시 실행할 부분
     if (!res ||res === 0 || res.errMessage != null || !res.connectHash) {

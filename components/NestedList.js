@@ -39,14 +39,25 @@ function NestedList({ selectMenuList, onMenuClick }) {
       component="nav"
       aria-labelledby="nested-list-subheader"
     >
-      {data.menuLvl === "2" && (
+      {data.menuLvl === "1" && (
         <ListItem sx={{ cursor: 'pointer' }} onClick={() => handleClick(data)}>
           <ListItemIcon sx={{ cursor: 'pointer' }}>
             <InboxIcon />
           </ListItemIcon>
           <ListItemText primary={data.menuNm} />
-          {!data.prgrmPath && (openItems[data.menuId] ? <ExpandLess /> : <ExpandMore />)}
+          {openItems[data.menuId] ? <ExpandLess /> : <ExpandMore />}
         </ListItem>
+      )}
+      {data.menuLvl === "2" && (
+        <Collapse in={openItems[data.upMenuId]} timeout="auto" unmountOnExit>
+          <ListItem sx={{ cursor: 'pointer' }} onClick={() => handleClick(data)}>
+            <ListItemIcon sx={{ cursor: 'pointer' }}>
+              <InboxIcon />
+            </ListItemIcon>
+            <ListItemText primary={data.menuNm} />
+            {!data.prgrmPath && (openItems[data.menuId] ? <ExpandLess /> : <ExpandMore />)}
+          </ListItem>
+        </Collapse>
       )}
       {data.menuLvl === "3" && openItems[data.upMenuId] && (
         <Collapse in={openItems[data.upMenuId]} timeout="auto" unmountOnExit>
