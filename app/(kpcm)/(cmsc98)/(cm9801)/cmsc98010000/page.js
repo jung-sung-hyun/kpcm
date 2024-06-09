@@ -11,7 +11,7 @@ import CustomModal from '@components/ModalComponent/CustomModal';
 import CustomAutocomplete from '@components/AutocompleteComponent/CustomAutocomplete';
 
 // 공통코드 불러오기
-import { getCommonCode } from '../../../../../utils/common';
+import { getCommonCode } from '../../../../../common/common';
 
 const columns = [
   { field: 'id', headerName: '순번', width: 90 },
@@ -170,6 +170,7 @@ export default function Sys28010({ searchParams }) {
           </Box>
         </Box>
       </CustomModal>
+      
        <Typography
         variant="h4"
         gutterBottom
