@@ -20,6 +20,7 @@ import NestedList from '../../components/NestedList';
 import { Tabs, Tab, Typography } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import { useSearchParams } from "next/navigation";
+import { format } from 'date-fns'; // date-fns 라이브러리를 사용하여 날짜를 포맷합니다.
 
 const drawerWidth = 300;
 
@@ -80,13 +81,14 @@ function LinkTab(props) {
   );
 }
 
+
 export default function Layout({ children }) {
 
   const searchParams = useSearchParams();
   const getConnectHash = searchParams.get("connectHash");
   console.log("=============handleSystemCommonClick===========getConnectHash====================");
   console.log(getConnectHash);
-  console.log("========================getConnectHash====================");
+  const currentTime = new Date().getTime(); // 현재 시간을 밀리초로 저장
 
 
   const [open, setOpen] = useState(true);
@@ -95,6 +97,26 @@ export default function Layout({ children }) {
   const [mounted, setMounted] = useState(false);
   const [currentTab, setCurrentTab] = useState('/');
   const router = useRouter();
+  const [logoutTime, setLogoutTime] = useState('');
+  const handleLogout = () => {
+    const now = new Date();
+    localStorage.removeItem('loginTime'); // 로그인 시간 정보 삭제
+    setLogoutTime(format(now, 'yyyy-MM-dd HH:mm:ss')); // 현재 시간을 '년-월-일 시:분:초' 형식으로 설정
+    // 로그아웃 로직을 여기에 추가
+    router.push('/');
+  };
+  const checkSessionValidity = () => {
+    const loginTime = localStorage.getItem('loginTime');
+    const currentTime = new Date().getTime();
+    const timeLimit = 1 * 60 * 1000; // 30분
+    // const timeLimit = 30 * 60 * 1000; // 30분
+
+    if (currentTime - loginTime > timeLimit) {
+      // 세션 시간 초과
+      handleLogout(); // 로그아웃 처리 함수
+    }
+  };
+  setInterval(checkSessionValidity, 5 * 60 * 1000); // 5분마다 검사
 
   const toggleDrawer = () => {
     setOpen(!open);
@@ -162,8 +184,14 @@ export default function Layout({ children }) {
   }
 
   useEffect(() => {
+    // getConnectHash가 null이면 로그인 페이지로 리디렉션
+    if (!getConnectHash) {
+      router.push('/');
+    }
     setMounted(true);
     handleSystemCommonClick("00000000000000000000");
+    checkSessionValidity();
+    localStorage.setItem('loginTime', currentTime);
   }, []);
 
   return (mounted &&
@@ -193,7 +221,9 @@ export default function Layout({ children }) {
               <NotificationsIcon />
             </Badge>
           </IconButton>
-          <Button href="/" color="inherit">로그아웃</Button>
+          <Button onClick={handleLogout} color="inherit">
+            로그아웃 {logoutTime && `(${logoutTime})`} {/* 로그아웃 시간 표시 */}
+          </Button>
         </Toolbar>
       </AppBar>
 
@@ -211,7 +241,6 @@ export default function Layout({ children }) {
           </IconButton>
         </Toolbar>
         <Divider />
-
         {/* 메뉴리스트 */}
         {/* <Button onClick={() => handleSystemCommonClick("00000000000000000001")} color="inherit" sx={{ justifyContent: 'flex-start' }}>[시스템공통]</Button>
         <Button onClick={() => handleSystemCommonClick("00000000000000000003")} color="inherit" sx={{ justifyContent: 'flex-start' }}>[시스템관리]</Button> */}

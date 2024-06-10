@@ -97,6 +97,21 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
     },
   }),
 );
+function checkSessionValidity() {
+  const loginTime = localStorage.getItem('loginTime');
+  const currentTime = new Date().getTime();
+  const timeLimit = 1 * 60 * 1000; // 30분
+  // const timeLimit = 30 * 60 * 1000; // 30분
+
+  if (currentTime - loginTime > timeLimit) {
+    // 세션 시간 초과
+    handleLogout(); // 로그아웃 처리 함수
+  }
+}
+function handleLogout() {
+  localStorage.removeItem('loginTime'); // 로그인 시간 정보 삭제
+  router.push('/'); // 로그인 페이지로 리디렉션
+}
 
 export default function Dashboard(props) {
   const searchParams = useSearchParams();
@@ -107,6 +122,9 @@ export default function Dashboard(props) {
   const toggleDrawer = () => {
     setOpen(!open);
   };
+  const currentTime = new Date().getTime(); // 현재 시간을 밀리초로 저장
+  localStorage.setItem('loginTime', currentTime);
+  setInterval(checkSessionValidity, 5 * 60 * 1000); // 5분마다 검사
 
   async function handleSystemCommonClick(props) {
     console.log("=============handleSystemCommonClick===========getConnectHash====================");
