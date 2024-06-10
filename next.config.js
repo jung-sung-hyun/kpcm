@@ -1,28 +1,6 @@
-// /** @type {import('next').NextConfig} */
-// const nextConfig = {};
-// export default nextConfig;
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  reactStrictMode: false,  // true로 변경시 devlop 단계에서 useEffect 2번 호출됌
+}
 
-// const{createProxyMiddleware} = require("http-proxy-middleware")
-// module.exports = function(app){
-//     app.use(
-//         "/",
-//         createProxyMiddleware({
-//             target: "http://localhost:5000",
-//             changOrgin: treu
-//         })
-//     )
-// }
-
-//  module.exports = {
-//  	eslint: {
-//  	    ignoreDuringBuilds: true,
-//  	  },	
-//  	async rewrites() {
-//  		return [
-//  			{
-//  				source: "/:path*",
-//  				destination: "http://localhost:8080/:path*",
-//  			},
-//  		];
-//  	}
-//  }
+module.exports = nextConfig

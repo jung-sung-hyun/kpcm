@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from 'react';
-import { Box, Button, Grid, MenuItem, Select, Typography, Modal  } from '@mui/material';
+import { Box, Grid, MenuItem, Typography  } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 import CustomTextField from '@components/TextFieldComponent/CustomTextField';
 import CustomPopover from '@components/PopoverComponent/CustomPopover';
@@ -9,9 +9,10 @@ import CustomBox from '@components/BoxComponent/CustomBox';
 import CustomButton from '@components/ButtonComponent/CustomButton';
 import CustomModal from '@components/ModalComponent/CustomModal';
 import CustomAutocomplete from '@components/AutocompleteComponent/CustomAutocomplete';
+import CustomSelect from '@components/SelectComponent/CustomSelect';
 
 // 공통코드 불러오기
-import { getCommonCode } from '../../../../../common/common';
+import { getCommonCode } from '../../../../common/common';
 
 const columns = [
   { field: 'id', headerName: '순번', width: 90 },
@@ -30,35 +31,36 @@ let options = [];
 
 export default function Sys28010({ searchParams }) {
   const [dataList, setDataList] = useState([]);
-  useEffect(() => {
-    const fetchCommonCode = async () => {
-      /*
-      try {
-        const data = await getCommonCode([
-          { codeCd: 'A01'},
-          { codeCd: 'B01'}
-        ]);
+  
+  // useEffect(() => {
+  //   const fetchCommonCode = async () => {
+  //     /*
+  //     try {
+  //       const data = await getCommonCode([
+  //         { codeCd: 'A01'},
+  //         { codeCd: 'B01'}
+  //       ]);
 
-        console.log("data: ", data);
+  //       console.log("data: ", data);
 
-        const A01Data = data.A01;
+  //       const A01Data = data.A01;
 
-        options = Object.keys(A01Data).map((key, index) => ({
-          label: A01Data[key],
-          id: index + 1
-        }));
+  //       options = Object.keys(A01Data).map((key, index) => ({
+  //         label: A01Data[key],
+  //         id: index + 1
+  //       }));
 
-        setDataList(options);
+  //       setDataList(options);
 
-        console.log("options: ", options);
-      } catch (error) {
-        console.error('Error fetching common code:', error);
-      }
-      */
-    };
+  //       console.log("options: ", options);
+  //     } catch (error) {
+  //       console.error('Error fetching common code:', error);
+  //     }
+  //     */
+  //   };
 
-    fetchCommonCode();
-  }, []); // 컴포넌트가 마운트될 때 한 번만 실행
+  //   fetchCommonCode();
+  // }, []); // 컴포넌트가 마운트될 때 한 번만 실행
 
   const [selectedSampleCode, setSelectedSampleCode] = useState(null);
 
@@ -107,7 +109,12 @@ export default function Sys28010({ searchParams }) {
 
   const handleSearch = () => {
     console.log('Search clicked');
-	};
+  };
+  
+  const selectOptions = [
+    { value: 'male', label: 'Male' },
+    { value: 'female', label: 'Female' },
+  ];
 
 	return (
     <CustomContainer>
@@ -205,19 +212,15 @@ export default function Sys28010({ searchParams }) {
             />
           </Grid>
           <Grid item xs={12} sm={6} md={3}>
-            <Select
-              label="Gender"
+            <CustomSelect
+              label="선택"
               value={age}
               onChange={handleAgeChange}
+              options={selectOptions}
               displayEmpty
               fullWidth
             >
-              <MenuItem value="">
-                <em>오류코드 셀렉트박스</em>
-              </MenuItem>
-              <MenuItem value="male">Male</MenuItem>
-              <MenuItem value="female">Female</MenuItem>
-            </Select>
+            </CustomSelect>
           </Grid>
           <Grid item xs={12} sm={6} md={3}>
             <CustomButton

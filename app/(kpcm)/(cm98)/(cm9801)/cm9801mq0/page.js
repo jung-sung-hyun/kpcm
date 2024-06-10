@@ -6,7 +6,7 @@ import Autocomplete from '@mui/material/Autocomplete';
 import SearchIcon from '@mui/icons-material/Search';
 
 // 공통코드 불러오기
-import { getCommonCode } from '../../../../../common/common';
+import { getCommonCode } from '../../../../common/common';
 
 const columns = [
   { field: 'id', headerName: '순번', width: 90 },

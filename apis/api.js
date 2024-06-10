@@ -22,10 +22,12 @@ export const fetcher = async (url, param, router) => {
       console.log('500, 501 Error');
       router.push('../app/common/(exception)/400error');
     } else {
+      alert('에러');
       console.log('ETC failed');
       router.push('../app/common/(exception)/network-error');
     }
   } catch (error) {
+    alert('에러');
     console.error('Error: ', error);
     throw error;
   }
