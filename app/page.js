@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import { Container, TextField, Button, Typography, Grid, Snackbar, CircularProgress } from '@mui/material';
 import { GlobalContext } from '../contexts/GlobalContext';
 import { fetcher } from '@apis/api';
+import { useSearchParams } from "next/navigation";
 
 /**
  * @description: 로그인을 위한 화면.
@@ -32,8 +33,19 @@ const LoginPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const { globalState, setGlobalState } = useContext(GlobalContext);
-
+  const searchParams = useSearchParams();
+  const getConnectHash = searchParams.get('connectHash');
   useEffect(() => {
+    const connectHash = localStorage.getItem('connectHash');
+    const logOut = async () => {
+      console.log("========================logOut===================={}",connectHash);
+      await fetcher('cm/cmsc01020000/delete00', { connectHash: connectHash }, router);
+      localStorage.clear();
+      return;
+    }
+    if(connectHash){
+      logOut();
+    }
     const checkSecurityProgram = async () => {
       // 보안 프로그램이 설치되어 있는지 확인하는 비동기 로직
       // TODO: 실제로 필요한 로직을 구현해야 함.
@@ -158,7 +170,7 @@ const LoginPage = () => {
     // router.push('/main');
     console.log('Routing to:', '/main', 'with query:', { connectHash: res.connectHash });
     router.push('/main?connectHash='+res.connectHash);
-
+    return { props: { res } };
 
   };
 

@@ -81,7 +81,6 @@ function LinkTab(props) {
   );
 }
 
-
 export default function Layout({ children }) {
 
   const searchParams = useSearchParams();
@@ -185,13 +184,28 @@ export default function Layout({ children }) {
 
   useEffect(() => {
     // getConnectHash가 null이면 로그인 페이지로 리디렉션
-    if (!getConnectHash) {
-      router.push('/');
-    }
     setMounted(true);
     handleSystemCommonClick("00000000000000000000");
-    checkSessionValidity();
+    //checkSessionValidity();
     localStorage.setItem('loginTime', currentTime);
+    localStorage.setItem('connectHash', getConnectHash);
+    const handleMouseMove = () => {
+      localStorage.setItem('loginTime', new Date().getTime());//마이스움직일때 로그인시간 업데이트
+      // console.log('마우스가 움직였습니다.');
+    };
+    const handleKeyDown = (event) => {
+      localStorage.setItem('loginTime', new Date().getTime());//키보드 버튼 눌렸을때 로그인시간 업데이트
+      // console.log(`키보드 버튼 '${event.key}'가 눌렸습니다.`);
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+
   }, []);
 
   return (mounted &&
