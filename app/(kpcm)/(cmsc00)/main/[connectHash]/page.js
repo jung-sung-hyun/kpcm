@@ -1,14 +1,11 @@
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 
-export default function Dashboard(props) {
-    console.log("========================props ====================",props);
+export default function Main(props) {
+  console.log("========================connectHash ====================",connectHash);
   const router = useRouter();
   const { connectHash } = router.query;
-  console.log("========================connectHash ====================",connectHash);
   return (
-    <div>
-      <h1>Dashboard</h1>
-    </div>
+    <></>
   );
 }
 

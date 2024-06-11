@@ -1,10 +1,11 @@
 "use client";
 import { useState, useRef, useContext, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Container, TextField, Button, Typography, Grid, Snackbar, CircularProgress } from '@mui/material';
+import { Container, TextField, Button, Typography, Grid, CircularProgress } from '@mui/material';
 import { GlobalContext } from '../contexts/GlobalContext';
 import { fetcher } from '@apis/api';
 import { useSearchParams } from "next/navigation";
+import CustomMessageModal from '@components/ModalComponent/CustomMessageModal';
 
 /**
  * @description: 로그인을 위한 화면.
@@ -65,7 +66,6 @@ const LoginPage = () => {
   }, [router]);
 
   const handleLogin = async (env) => {
-    setIsLoading(true); // 로딩 상태 시작
     console.log("========================env====================", env);
     console.log("========================email====", email);
     console.log("========================password====", password);
@@ -75,6 +75,8 @@ const LoginPage = () => {
       setOpenAlert(true);
       return;
     }
+
+    setIsLoading(true); // 로딩 상태 시작
 
     // try {
     //   const res = await fetcher('cm/cmsc01020000/select00', { mbrEmlAddr: email, userPswd: password }, router);
@@ -176,7 +178,7 @@ const LoginPage = () => {
     setOpenAlert(false);
   };
 
-  return (
+   return (
     <div style={{ position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
       {isLoading && (
         <div style={{ position: 'absolute', zIndex: 1 }}>
@@ -201,6 +203,11 @@ const LoginPage = () => {
               value={email}
               inputRef={emailRef}
               onChange={(e) => setEmail(e.target.value)}
+              InputProps={{
+                onFocus: (e) => e.target.placeholder = '',
+                onBlur: (e) => e.target.placeholder = '이메일',
+              }}
+              placeholder="이메일"
             />
           </Grid>
           <Grid item xs={12}>
@@ -212,6 +219,11 @@ const LoginPage = () => {
               margin="normal"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              InputProps={{
+                onFocus: (e) => e.target.placeholder = '',
+                onBlur: (e) => e.target.placeholder = '비밀번호',
+              }}
+              placeholder="비밀번호"
             />
           </Grid>
           <Grid item xs={12}>
@@ -226,15 +238,21 @@ const LoginPage = () => {
             </Button>
           </Grid>
         </Grid>
-        <Snackbar
+        <CustomMessageModal
           open={openAlert}
-          autoHideDuration={6000}
           onClose={handleCloseAlert}
-          message={alertMessage}
-          anchorOrigin={{
-            vertical: 'bottom',
-            horizontal: 'center',
-          }}
+          content={
+            <>
+              <Typography gutterBottom>
+                {alertMessage}
+              </Typography>
+            </>
+          }
+          actions={
+            <Button autoFocus onClick={handleCloseAlert}>
+              닫기
+            </Button>
+          }
         />
       </Container>
     </div>

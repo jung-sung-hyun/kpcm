@@ -272,7 +272,11 @@ export default function Layout({ children }) {
               {/* mdi */}
               <Box sx={{ display: 'flex', height: '100vh' }}>
                 <Box sx={{ flexGrow: 1 }}>
-                  <Tabs value={currentTab} onChange={handleTabChange} aria-label="nav tabs example">
+                  <Tabs
+                    value={currentTab === '/' || !currentTab ? 0 : currentTab}
+                    onChange={handleTabChange}
+                    aria-label="nav tabs example"
+                  >
                     {tabs.map((tab) => (
                       <LinkTab
                         key={tab.path}

@@ -1,3 +1,4 @@
+import * as React from 'react';
 import { Button, Dialog, DialogTitle, DialogContent, DialogActions, IconButton, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import CloseIcon from '@mui/icons-material/Close';
@@ -11,18 +12,28 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   },
 }));
 
+const CustomDialogContent = styled(DialogContent)(({ theme }) => ({
+  paddingTop: theme.spacing(20),
+  paddingBottom: theme.spacing(20),
+}));
+
+const CustomDialogTitle = styled(DialogTitle)(({ theme }) => ({
+  marginBottom: theme.spacing(20),
+  paddingRight: theme.spacing(5),
+}));
+
 const CustomMessageModal = ({ title, content, open, onClose, onOpen, actions }) => {
   return (
     <React.Fragment>
-      <Button variant="outlined" onClick={onOpen}>
+      {/* <Button variant="outlined" onClick={onOpen}>
         Open dialog
-      </Button>
+      </Button> */}
       <BootstrapDialog
         onClose={onClose}
         aria-labelledby="customized-dialog-title"
         open={open}
       >
-        <DialogTitle sx={{ m: 0, p: 2 }} id="customized-dialog-title">
+        <CustomDialogTitle sx={{ m: 0, p: 3 }} id="customized-dialog-title">
           {title}
           <IconButton
             aria-label="close"
@@ -36,10 +47,10 @@ const CustomMessageModal = ({ title, content, open, onClose, onOpen, actions }) 
           >
             <CloseIcon />
           </IconButton>
-        </DialogTitle>
-        <DialogContent dividers>
+        </CustomDialogTitle>
+        <CustomDialogContent dividers>
           {content}
-        </DialogContent>
+        </CustomDialogContent>
         <DialogActions>
           {actions}
         </DialogActions>

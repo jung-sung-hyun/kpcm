@@ -1,14 +1,6 @@
-
-import Link from "next/link"
 import * as React from 'react';
 
-import {
-    Button
-   ,Stack
-} from '@mui/material';
-import { Directions } from "@mui/icons-material";
 export const fetchCache = "only-no-store";
-
 
 export const metadata = {
   title: "한국조폐공사 결제플랫폼",
@@ -16,7 +8,6 @@ export const metadata = {
 };
 
 export default async function RootLayout({ children }) {
-
   return (
     <html>
       <body suppressHydrationWarning={true}>
