@@ -31,7 +31,6 @@ const LoginPage = () => {
   const [alertMessage, setAlertMessage] = useState('이메일과 비밀번호를 입력해주세요.');
   const emailRef = useRef(null); // 참조 생성
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState('');
   const { globalState, setGlobalState } = useContext(GlobalContext);
   const searchParams = useSearchParams();
   const getConnectHash = searchParams.get('connectHash');
@@ -51,7 +50,6 @@ const LoginPage = () => {
       // TODO: 실제로 필요한 로직을 구현해야 함.
       console.log("========================보안프로그램 설치여부 확인중====================");
       // 여기에서 실제로 보안 프로그램이 설치되어 있는지 확인하는 비동기 작업을 수행
-      // 예시로는 단순히 true를 반환합니다. 실제로는 필요한 로직을 구현하세요.
       return true;
     };
 
@@ -67,6 +65,7 @@ const LoginPage = () => {
   }, [router]);
 
   const handleLogin = async (env) => {
+    if (isLoading) return; // 로딩 중이면 중복 호출 방지
     setIsLoading(true); // 로딩 상태 시작
     console.log("========================env====================", env);
     console.log("========================email====", email);
@@ -75,94 +74,30 @@ const LoginPage = () => {
     if (!email || !password) {
       setAlertMessage("이메일과 비밀번호를 입력해주세요.");
       setOpenAlert(true);
+      setIsLoading(false);
       return;
     }
 
-    // try {
-    //   const res = await fetcher('cm/cmsc01020000/select00', { mbrEmlAddr: email, userPswd: password }, router);
-    //   console.log('Authentication success', res);
-    //   // 성공 시 실행할 추가 작업
-    //   setIsLoading(false);
-    //   console.log("========================connectHash====================: ", res.connectHash);
-    //   setConnectHash(res.connectHash);
-    //   // setGlobalState((prevState) => ({
-    //   //   ...prevState,
-    //   //   user: { name: 'test user', email: email, useHashCode: res.connectHash },
-    //   // }));
-    //   console.log('Routing to:', '/main', 'with query:', { connectHash: res.connectHash });
-    //   router.push('/main?connectHash=' + res.connectHash);
-    // } catch (err) {
-    //   // 실패 시 실행할 부분
-    //   console.error("=======================>err: ", err);
-    //   setAlertMessage(err.message);
-    //   setIsLoading(false);
-    //   if (!res || res === 0 || res.errMessage != null || !res.connectHash) {
-    //     console.log("========================res.errMessage =======error in=============");
-    //     setAlertMessage(res.errMessage);
-    //     setOpenAlert(true);
-    //     emailRef.current.focus(); // 포커스 이동
-    //     console.log("========================res.errMessage =1==2=======43==========", res.errMessage);
-    //     return;
-    //   }
-    // }
-
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/cm/cmsc01020000/select00`, {
-      cache: 'no-store',
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ mbrEmlAddr: email, userPswd: password })
-    })
-      .then((response) => {
-        console.log("response:",response);
-        console.log("response code: ", response.status);
-        setIsLoading(false);
-        if (response.status === 200) {
-          console.log('Authentication success');
-          return response.json();
-        } else if (response.status === 400) {
-          console.log('Authentication failed');
-          router.push('/exception/400error');
-        } else if (response.status === 500 || response.status === 501) {
-          console.log("response:","500 error: ");
-          console.log(response);
-          console.log("response code: ", response.status);
-
-          console.log('Authentication failed');
-          return response.json().then(err => { setAlertMessage(err.errorMessage); });
-          //setAlertMessage(res.message);
-          //router.push('/exception/500error');
-        } else {
-          // 기타 상태 코드
-          router.push('/exception/network-error');
-        }
-      })
-      .then((result) => {
-        setIsLoading(false);
-        // 성공 시 실행할 부분
-        return result;
-      })
-      .catch((err) => {
-        setIsLoading(false);
-        // 인터넷 문제로 실패 시 실행할 부분
-        console.log("===================1====>>>err: ", err);
-        return err;
-      });
-
-      console.log("res: ");
-      console.log(res);
-      // setGlobalState((prevState) => ({
-      //   ...prevState,
-      //   user: { name: 'teest user', email: email , useHashCode: res.connectHash},
-      // }));
-    // 실패 시 실행할 부분
-    if (!res ||res === 0 || res.errMessage != null || !res.connectHash) {
-      console.log("========================res.errMessage =======error in============={}",res.errMessage);
-      setAlertMessage(res.errMessage);
+    try {
+      const res = await fetcher('cm/cmsc01020000/select00', { mbrEmlAddr: email, userPswd: password }, router);
+      console.log('Authentication success', res);
+      // 성공 시 실행할 추가 작업
+      console.log("========================connectHash====================: ", res.connectHash);
+      setConnectHash(res.connectHash);
+      setGlobalState((prevState) => ({
+        ...prevState,
+        user: { name: 'test user', email: email, useHashCode: res.connectHash },
+      }));
+      console.log('Routing to:', '/main', 'with query:', { connectHash: res.connectHash });
+      router.push('/main?connectHash=' + res.connectHash);
+    } catch (err) {
+      // 실패 시 실행할 부분
+      console.error("err: ", err);
+      setAlertMessage(err.message);
       setOpenAlert(true);
       emailRef.current.focus(); // 포커스 이동
-      return;
+    } finally {
+      setIsLoading(false); // 로딩 상태 종료
     }
     console.log("========================connectHash====================");
     console.log(res.connectHash);
@@ -223,6 +158,7 @@ const LoginPage = () => {
               color="primary"
               size="large"
               onClick={handleLogin}
+              disabled={isLoading} // 로딩 중이면 버튼 비활성화
             >
               로그인
             </Button>

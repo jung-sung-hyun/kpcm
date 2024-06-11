@@ -1,6 +1,6 @@
 import Modal from '@mui/material/Modal';
 
-const CustomModal = ({ open, onClose, children, ...props }) => {
+const CustomPageModal = ({ open, onClose, children, ...props }) => {
   return (
     <Modal
       open={open}
@@ -14,4 +14,4 @@ const CustomModal = ({ open, onClose, children, ...props }) => {
   );
 };
 
-export default CustomModal;
+export default CustomPageModal;
