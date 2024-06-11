@@ -87,6 +87,14 @@ const LoginPage = () => {
     } finally {
       setIsLoading(false); // 로딩 상태 종료
     }
+    console.log("========================connectHash====================");
+    console.log(res.connectHash);
+    setConnectHash(res.connectHash);
+    // router.push('/main');
+    console.log('Routing to:', '/main', 'with query:', { connectHash: res.connectHash });
+    router.push('/main?connectHash='+res.connectHash);
+
+
   };
 
   const handleCloseAlert = () => {
