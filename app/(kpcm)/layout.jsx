@@ -89,7 +89,6 @@ export default function Layout({ children }) {
   console.log(getConnectHash);
   const currentTime = new Date().getTime(); // 현재 시간을 밀리초로 저장
 
-
   const [open, setOpen] = useState(true);
   const [selectMenuList, setSelectMenuList] = useState([]);
   const [tabs, setTabs] = useState([]);
@@ -97,12 +96,14 @@ export default function Layout({ children }) {
   const [currentTab, setCurrentTab] = useState('/');
   const router = useRouter();
   const [logoutTime, setLogoutTime] = useState('');
+
   const handleLogout = () => {
+    console.log("===================dd=====handleLogout====================");
     const now = new Date();
     localStorage.removeItem('loginTime'); // 로그인 시간 정보 삭제
     setLogoutTime(format(now, 'yyyy-MM-dd HH:mm:ss')); // 현재 시간을 '년-월-일 시:분:초' 형식으로 설정
-    // 로그아웃 로직을 여기에 추가
-    router.push('/');
+    // // 로그아웃 로직을 여기에 추가
+     router.push('/');
   };
   const checkSessionValidity = () => {
     const loginTime = localStorage.getItem('loginTime');
