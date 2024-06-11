@@ -7,9 +7,10 @@ import CustomPopover from '@components/PopoverComponent/CustomPopover';
 import CustomContainer from '@components/ContainerComponent/CustomContainer';
 import CustomBox from '@components/BoxComponent/CustomBox';
 import CustomButton from '@components/ButtonComponent/CustomButton';
-import CustomModal from '@components/ModalComponent/CustomModal';
+import CustomPageModal from '@components/ModalComponent/CustomPageModal';
 import CustomAutocomplete from '@components/AutocompleteComponent/CustomAutocomplete';
 import CustomSelect from '@components/SelectComponent/CustomSelect';
+import CustomMessageModal from '@components/ModalComponent/CustomMessageModal';
 
 // 공통코드 불러오기
 import { getCommonCode } from '../../../../common/common';
@@ -141,7 +142,7 @@ export default function Sys28010({ searchParams }) {
         </CustomBox>
       </CustomPopover>
 
-      <CustomModal
+      <CustomPageModal
         open={openModal}
         onClose={handleCloseModal}
       >
@@ -176,7 +177,7 @@ export default function Sys28010({ searchParams }) {
             </CustomButton>
           </Box>
         </Box>
-      </CustomModal>
+      </CustomPageModal>
       
        <Typography
         variant="h4"

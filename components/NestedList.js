@@ -13,14 +13,10 @@ import StarBorder from '@mui/icons-material/StarBorder';
 
 // navigation 메뉴 목록
 function NestedList({ selectMenuList, onMenuClick }) {
-  console.log("===========================upMenuId", selectMenuList);
-  const [open, setOpen] = useState(false);
   const [openItems, setOpenItems] = useState({});
   const router = useRouter();
 
   const handleClick = (data) => {
-    console.log("menu click: ", data.menuId);
-    setOpen(!open);
     setOpenItems(prev => ({
       ...prev,
       [data.menuId]: !prev[data.menuId]
@@ -32,47 +28,48 @@ function NestedList({ selectMenuList, onMenuClick }) {
   };
 
   return (
-    selectMenuList && selectMenuList.map((data) => (
-      <List
-      key={data.menuId}
+    <List
       sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper', cursor: 'pointer' }}
       component="nav"
       aria-labelledby="nested-list-subheader"
     >
-      {data.menuLvl === "1" && (
-        <ListItem sx={{ cursor: 'pointer' }} onClick={() => handleClick(data)}>
-          <ListItemIcon sx={{ cursor: 'pointer' }}>
-            <InboxIcon />
-          </ListItemIcon>
-          <ListItemText primary={data.menuNm} />
-          {openItems[data.menuId] ? <ExpandLess /> : <ExpandMore />}
-        </ListItem>
-      )}
-      {data.menuLvl === "2" && (
-        <Collapse in={openItems[data.upMenuId]} timeout="auto" unmountOnExit>
-          <ListItem sx={{ cursor: 'pointer' }} onClick={() => handleClick(data)}>
-            <ListItemIcon sx={{ cursor: 'pointer' }}>
-              <InboxIcon />
-            </ListItemIcon>
-            <ListItemText primary={data.menuNm} />
-            {!data.prgrmPath && (openItems[data.menuId] ? <ExpandLess /> : <ExpandMore />)}
-          </ListItem>
-        </Collapse>
-      )}
-      {data.menuLvl === "3" && openItems[data.upMenuId] && (
-        <Collapse in={openItems[data.upMenuId]} timeout="auto" unmountOnExit>
-          <List component="div" disablePadding>
-            <ListItem sx={{ pl: 4, cursor: 'pointer' }} onClick={() => handleClick(data)}>
+      {selectMenuList && selectMenuList.map((data) => (
+        <React.Fragment key={data.menuId}>
+          {data.menuLvl === "1" && (
+            <ListItem sx={{ cursor: 'pointer' }} onClick={() => handleClick(data)}>
               <ListItemIcon sx={{ cursor: 'pointer' }}>
-                <StarBorder />
+                <InboxIcon />
               </ListItemIcon>
               <ListItemText primary={data.menuNm} />
+              {openItems[data.menuId] ? <ExpandLess /> : <ExpandMore />}
             </ListItem>
-          </List>
-        </Collapse>
-      )}
+          )}
+          {data.menuLvl === "2" && (
+            <Collapse in={openItems[data.upMenuId]} timeout="auto" unmountOnExit>
+              <ListItem sx={{ cursor: 'pointer', pl: 4 }} onClick={() => handleClick(data)}>
+                <ListItemIcon sx={{ cursor: 'pointer' }}>
+                  <InboxIcon />
+                </ListItemIcon>
+                <ListItemText primary={data.menuNm} />
+                {!data.prgrmPath && (openItems[data.menuId] ? <ExpandLess /> : <ExpandMore />)}
+              </ListItem>
+            </Collapse>
+          )}
+          {data.menuLvl === "3" && openItems[data.upMenuId] && (
+            <Collapse in={openItems[data.upMenuId]} timeout="auto" unmountOnExit>
+              <List component="div" disablePadding>
+                <ListItem sx={{ pl: 8, cursor: 'pointer' }} onClick={() => handleClick(data)}>
+                  <ListItemIcon sx={{ cursor: 'pointer' }}>
+                    <StarBorder />
+                  </ListItemIcon>
+                  <ListItemText primary={data.menuNm} />
+                </ListItem>
+              </List>
+            </Collapse>
+          )}
+        </React.Fragment>
+      ))}
     </List>
-    ))
   );
 }
 

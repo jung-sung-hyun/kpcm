@@ -14,6 +14,7 @@ export const fetcher = async (url, param, router) => {
 
     if (res.status === 200) {
       const data = await res.json();
+      console.log('200 OK');
       return data;
     } else if (res.status === 400) {
       console.log('400 Error');
