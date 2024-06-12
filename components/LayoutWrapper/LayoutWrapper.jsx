@@ -176,10 +176,10 @@ export default function Layout({ children }) {
         console.log(err);
       });
     if (!res || res === 0 || res.errMessage != null || !res.connectHash) {
-      alert('세션 시간이 초과되었습니다. 다시 로그인하세요.');
+      //alert('세션 시간이 초과되었습니다. 다시 로그인하세요.');
       setIsLoading(false);
-      router.push('/');
-      console.log("========================res.errMessage=>>:{}", res.errMessage);
+      //router.push('/');
+      //console.log("========================res.errMessage=>>:{}", res.errMessage);
       return;
     }
     setSelectMenuList(res.dataList);
@@ -256,7 +256,7 @@ export default function Layout({ children }) {
         component="main"
         sx={{ flexGrow: 1, bgcolor: 'background.default', p: 3 }}
       >
-        <Container maxWidth="xl" sx={{ mt: 8, mb: 8 }}>
+        <Container maxWidth="lg" sx={{ mt: 8, mb: 8, ml: 2 }}>
           <Grid container spacing={3}>
             <Grid item xs={12} md={8} lg={9}>
               <Box sx={{ display: 'flex', height: '100vh' }}>

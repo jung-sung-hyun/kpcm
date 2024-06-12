@@ -10,7 +10,9 @@ import CustomBox from '@components/BoxComponent/CustomBox';
 import CustomButton from '@components/ButtonComponent/CustomButton';
 import CustomPageModal from '@components/ModalComponent/CustomPageModal';
 import CustomSelect from '@components/SelectComponent/CustomSelect';
+import CustomDatePicker from '@components/DatePickerComponent/CustomDatePicker';
 import { codeNmState } from '../../../../common/state';
+import dayjs from 'dayjs';
 
 const columns = [
   { field: 'id', headerName: '순번', width: 90 },
@@ -31,8 +33,23 @@ export default function Sys28010({ searchParams }) {
   const [openModal, setOpenModal] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
   const [codeNm, setCodeNm] = useRecoilState(codeNmState);
+  const [error, setError] = useState(false);
+  const [helperText, setHelperText] = useState('');
+  const [isDisabled, setIsDisabled] = useState(false);
+  const [selectedDate, setSelectedDate] = useState('2023-01-01');
 
+  const handleDateChange = (newDate) => {
+    console.log('Selected date:', newDate.format('YYYY-MM-DD'));
+    setSelectedDate(newDate.format('YYYY-MM-DD'));
+  };
   const menuName = searchParams.label;
+
+  const handleInputChange = (event) => {
+    console.log("event value: ", event.target.value);
+    setCodeNm(event.target.value);
+    setError(false);
+    setHelperText('');
+  };
 
   useEffect(() => {
     if (codeNm === '') {
@@ -64,7 +81,15 @@ export default function Sys28010({ searchParams }) {
   };
 
   const handleSearch = () => {
-    console.log('Search clicked');
+    console.log("codeNm: ", codeNm);
+    if (!codeNm) {
+      setError(true);
+      setHelperText('오류메시지 코드명을 입력하세요.');
+    } else {
+      setError(false);
+      setHelperText('');
+      // 여기에서 조회 로직을 추가합니다.
+    }
   };
 
   const selectOptions = [
@@ -148,12 +173,35 @@ export default function Sys28010({ searchParams }) {
       <Box component="form" sx={{ mb: 4 }}>
         <Grid container spacing={2}>
           <Grid item xs={12} sm={6} md={3}>
+            <CustomDatePicker
+              label="조회시작일자"
+              defaultValue="2023-01-01"
+              controlled={true}
+              disabled={false}
+              minDate="1901-01-01"
+              maxDate="2030-12-31"
+              onChange={handleDateChange}
+            />
+          </Grid>
+          <Grid item xs={12} sm={6} md={3}>
+            <CustomDatePicker
+              label="조회종료일자"
+              defaultValue="2023-01-01"
+              controlled={true}
+              disabled={false}
+              minDate="1901-01-01"
+              maxDate="2030-12-31"
+              onChange={handleDateChange}
+            />
+          </Grid>
+          <Grid item xs={12} sm={6} md={3}>
             <CustomTextField
               label="오류메시지 코드명"
               value={codeNm}
               variant="outlined"
-              fullWidth
-              onChange={(e) => setCodeNm(e.target.value)}
+              error={error}
+              helperText={helperText}
+              onChange={handleInputChange}
             />
           </Grid>
           {/* autocomplete 사용안한다고함 (24.06.10 그룹장님)
@@ -176,12 +224,14 @@ export default function Sys28010({ searchParams }) {
             />
           </Grid>
           <Grid item xs={12} sm={6} md={3}>
-            <CustomButton
-              variant="contained"
-              color="primary"
-              fullWidth
-              onClick={handleSearch}
-            >
+             <CustomButton
+                variant="contained"
+                color="primary"
+                fullWidth
+                size="medium"
+                onClick={handleSearch}
+                disabled={isDisabled}
+              >
               조회
             </CustomButton>
           </Grid>
