@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState } from 'react';
-import { Box, Grid, MenuItem, Typography  } from '@mui/material';
+import { useRecoilState } from 'recoil';
+import { Box, Grid, MenuItem, Typography } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 import CustomTextField from '@components/TextFieldComponent/CustomTextField';
 import CustomPopover from '@components/PopoverComponent/CustomPopover';
@@ -8,12 +9,8 @@ import CustomContainer from '@components/ContainerComponent/CustomContainer';
 import CustomBox from '@components/BoxComponent/CustomBox';
 import CustomButton from '@components/ButtonComponent/CustomButton';
 import CustomPageModal from '@components/ModalComponent/CustomPageModal';
-//import CustomAutocomplete from '@components/AutocompleteComponent/CustomAutocomplete';
 import CustomSelect from '@components/SelectComponent/CustomSelect';
-import CustomMessageModal from '@components/ModalComponent/CustomMessageModal';
-
-// 공통코드 불러오기
-import { getCommonCode } from '../../../../common/common';
+import { codeNmState } from '../../../../common/state';
 
 const columns = [
   { field: 'id', headerName: '순번', width: 90 },
@@ -28,59 +25,25 @@ const rows = [
   { id: 3, name: 'Michael Brown', age: 35, city: 'Chicago' },
 ];
 
-let options = [];
-
 export default function Sys28010({ searchParams }) {
   const [dataList, setDataList] = useState([]);
-  
-  // useEffect(() => {
-  //   const fetchCommonCode = async () => {
-  //     /*
-  //     try {
-  //       const data = await getCommonCode([
-  //         { codeCd: 'A01'},
-  //         { codeCd: 'B01'}
-  //       ]);
-
-  //       console.log("data: ", data);
-
-  //       const A01Data = data.A01;
-
-  //       options = Object.keys(A01Data).map((key, index) => ({
-  //         label: A01Data[key],
-  //         id: index + 1
-  //       }));
-
-  //       setDataList(options);
-
-  //       console.log("options: ", options);
-  //     } catch (error) {
-  //       console.error('Error fetching common code:', error);
-  //     }
-  //     */
-  //   };
-
-  //   fetchCommonCode();
-  // }, []); // 컴포넌트가 마운트될 때 한 번만 실행
-
   const [selectedSampleCode, setSelectedSampleCode] = useState(null);
+  const [openModal, setOpenModal] = useState(false);
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [codeNm, setCodeNm] = useRecoilState(codeNmState);
+
+  const menuName = searchParams.label;
+
+  useEffect(() => {
+    if (codeNm === '') {
+      setCodeNm(null);
+    }
+  }, [codeNm, setCodeNm]);
 
   const handleCodeChange = (event, newValue) => {
     console.log("newValue: ", newValue);
     setSelectedSampleCode(newValue);
   };
-
-  const handleOptions = (event, newValue) => {
-    console.log("newValue: ", newValue);
-    setSelectedSampleCode(newValue);
-  };
-
-	const menuName = searchParams.label;
-  const [age, setAge] = useState('');
-  const [selectedCity, setSelectedCity] = useState(null);
-	const cities = ['New York', 'Los Angeles', 'Chicago', 'Houston', 'Phoenix'];
-	const [openModal, setOpenModal] = useState(false);
-	const [anchorEl, setAnchorEl] = useState(null);
 
   const handlePopoverOpen = (event) => {
     setAnchorEl(event.currentTarget);
@@ -100,24 +63,16 @@ export default function Sys28010({ searchParams }) {
     setOpenModal(false);
   };
 
-  const handleAgeChange = (event) => {
-    setAge(event.target.value);
-  };
-
-  const handleCityChange = (event, newValue) => {
-    setSelectedCity(newValue);
-  };
-
   const handleSearch = () => {
     console.log('Search clicked');
   };
-  
+
   const selectOptions = [
     { value: 'male', label: 'Male' },
     { value: 'female', label: 'Female' },
   ];
 
-	return (
+  return (
     <CustomContainer>
       <CustomPopover
         open={openPopover}
@@ -149,17 +104,17 @@ export default function Sys28010({ searchParams }) {
         <Box
           sx={{
             position: 'absolute',
-						top: '50%',
-						left: '50%',
-						transform: 'translate(-50%, -50%)',
-						width: 400,
-						bgcolor: 'background.paper',
-						border: '2px solid #000',
-						boxShadow: 24,
-						p: 4,
-						display: 'flex',
-						flexDirection: 'column',
-						gap: 2,
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            width: 400,
+            bgcolor: 'background.paper',
+            border: '2px solid #000',
+            boxShadow: 24,
+            p: 4,
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 2,
           }}
         >
           <Typography id="modal-title" variant="h6" component="h2">
@@ -179,7 +134,7 @@ export default function Sys28010({ searchParams }) {
         </Box>
       </CustomPageModal>
       
-       <Typography
+      <Typography
         variant="h4"
         gutterBottom
         sx={{
@@ -188,17 +143,17 @@ export default function Sys28010({ searchParams }) {
           fontWeight: 500,  // Optional: Change font weight
         }}
       >
-				{ menuName}
+        {menuName}
       </Typography>
       <Box component="form" sx={{ mb: 4 }}>
         <Grid container spacing={2}>
           <Grid item xs={12} sm={6} md={3}>
             <CustomTextField
               label="오류메시지 코드명"
+              value={codeNm}
               variant="outlined"
               fullWidth
-              value={age}
-              onChange={handleAgeChange}
+              onChange={(e) => setCodeNm(e.target.value)}
             />
           </Grid>
           {/* autocomplete 사용안한다고함 (24.06.10 그룹장님)
@@ -212,9 +167,9 @@ export default function Sys28010({ searchParams }) {
           </Grid> */}
           <Grid item xs={12} sm={6} md={3}>
             <CustomSelect
-              label="선택"
-              value={age}
-              onChange={handleAgeChange}
+              label="오류메시지 코드명"
+              value={selectedSampleCode}
+              onChange={handleCodeChange}
               options={selectOptions}
               displayEmpty
               fullWidth

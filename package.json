@@ -24,6 +24,7 @@
     "react-dom": "^18",
     "react-dropzone": "^14.2.3",
     "react-router-dom": "^6.23.1",
+    "recoil": "^0.7.7",
     "redis": "^4.6.14",
     "x2bee-core": "file:libs/x2bee-core"
   },

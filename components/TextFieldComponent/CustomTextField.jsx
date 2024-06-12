@@ -1,10 +1,23 @@
 import TextField from '@mui/material/TextField';
-
-const CustomTextField = ({ label, value, onChange }) => (
+/**
+ * @description: TextField 공통 컴포넌트 정의한다.
+ * @function CustomTextField
+ * @param {label, value, variant, onChange} props
+ * @returns
+ * 변경이 있을 때에는 수정 이력에 변경일자와 변경자, 그리고 변경사유를 기록하여 관리가 되도록 한다.
+ * ========================================================================================================
+ *                                    수정 이력관리 (형상관리에도 Copy 반영)
+ * --------------------------------------------------------------------------------------------------------
+ *      수정일        수정자                                  수정내용
+ * --------------------------------------------------------------------------------------------------------
+ *   2024.06.12       박대철                                  최초작성
+ * ========================================================================================================
+ */
+const CustomTextField = ({ label, value, variant }) => (
   <TextField
     label={label}
     value={value}
-    onChange={onChange}
+    variant={variant}
     fullWidth
   />
 );

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import RecoilRootWrapper from '@components/RecoilWrapper/RecoilRootWrapper';
 
 export const fetchCache = "only-no-store";
 
@@ -11,7 +11,9 @@ export default async function RootLayout({ children }) {
   return (
     <html>
       <body suppressHydrationWarning={true}>
-         {children}
+        <RecoilRootWrapper>
+          {children}
+        </RecoilRootWrapper>
       </body>
     </html>
   )
