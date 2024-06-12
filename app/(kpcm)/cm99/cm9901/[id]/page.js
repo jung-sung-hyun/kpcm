@@ -12,7 +12,7 @@ import {
  ,FormControl
  ,InputLabel
 } from '@mui/material';
-import ComboBox from './components/ComboBox'; // 경로는 실제 프로젝트의 구조에 따라 조정
+//import ComboBox from './components/ComboBox'; // 경로는 실제 프로젝트의 구조에 따라 조정
 
 export default function AlertDialog() {
     //콤보박스
@@ -94,12 +94,12 @@ export default function AlertDialog() {
         </div>
 
         <div>
-        <ComboBox
+        {/* <ComboBox
           label="선택하세요"
           options={options}
           defaultValue="option1"
           onChange={handleComboBoxChange}
-        />
+        /> */}
         </div>
 
         </>

@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { styled, createTheme, ThemeProvider } from '@mui/material/styles';
+import { styled } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import MuiDrawer from '@mui/material/Drawer';
 import Box from '@mui/material/Box';
@@ -20,7 +20,8 @@ import NestedList from '../../components/NestedList';
 import { Tabs, Tab, Typography } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import { useSearchParams } from "next/navigation";
-import { format } from 'date-fns'; // date-fns 라이브러리를 사용하여 날짜를 포맷합니다.
+import { format } from 'date-fns';
+import CircularProgress from '@mui/material/CircularProgress';
 
 const drawerWidth = 300;
 
@@ -72,22 +73,15 @@ function LinkTab(props) {
   return (
     <Tab
       component="a"
-      onClick={(event) => {
-        event.preventDefault();
-        props.onClick(event);
-      }}
       {...props}
     />
   );
 }
 
 export default function Layout({ children }) {
-
   const searchParams = useSearchParams();
   const getConnectHash = searchParams.get("connectHash");
-  console.log("=============handleSystemCommonClick===========getConnectHash====================");
-  console.log(getConnectHash);
-  const currentTime = new Date().getTime(); // 현재 시간을 밀리초로 저장
+  const currentTime = new Date().getTime();
 
   const [open, setOpen] = useState(true);
   const [selectMenuList, setSelectMenuList] = useState([]);
@@ -96,35 +90,34 @@ export default function Layout({ children }) {
   const [currentTab, setCurrentTab] = useState('/');
   const router = useRouter();
   const [logoutTime, setLogoutTime] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleLogout = () => {
-    console.log("===================dd=====handleLogout====================");
     const now = new Date();
-    localStorage.removeItem('loginTime'); // 로그인 시간 정보 삭제
-    setLogoutTime(format(now, 'yyyy-MM-dd HH:mm:ss')); // 현재 시간을 '년-월-일 시:분:초' 형식으로 설정
-    // // 로그아웃 로직을 여기에 추가
-     router.push('/');
+    localStorage.removeItem('loginTime');
+    setLogoutTime(format(now, 'yyyy-MM-dd HH:mm:ss'));
+    router.push('/');
   };
+
   const checkSessionValidity = () => {
     const loginTime = localStorage.getItem('loginTime');
     const currentTime = new Date().getTime();
-    const timeLimit = 1 * 60 * 1000; // 30분
-    // const timeLimit = 30 * 60 * 1000; // 30분
+    const timeLimit = 1 * 60 * 1000;
 
     if (currentTime - loginTime > timeLimit) {
-      // 세션 시간 초과
-      handleLogout(); // 로그아웃 처리 함수
+      handleLogout();
     }
   };
-  setInterval(checkSessionValidity, 5 * 60 * 1000); // 5분마다 검사
+
+  setInterval(checkSessionValidity, 5 * 60 * 1000);
 
   const toggleDrawer = () => {
     setOpen(!open);
   };
 
   const handleMenuClick = (label, path) => {
-    if (tabs.length >= 2) {
-      alert('최대 열람가능한 탭 개수는 2개입니다.');
+    if (tabs.length > 10) {
+      alert('최대 열람가능한 탭 개수는 10개입니다.');
       return;
     }
 
@@ -141,62 +134,71 @@ export default function Layout({ children }) {
   };
 
   const handleTabClose = (event, path) => {
+    
     event.stopPropagation();
-    setTabs(tabs.filter(tab => tab.path !== path));
+    
+    const newTabs = tabs.filter(tab => tab.path !== path);
+
     if (currentTab === path) {
-      setCurrentTab(tabs.length > 1 ? tabs[0].path : '/');
-      router.push(tabs.length > 1 ? tabs[0].path : '/');
+      const newPath = newTabs.length > 0 ? newTabs[0].path : `/main?connectHash=${getConnectHash}`;
+      setCurrentTab(newPath);
+      if (router.pathname !== newPath) {
+        console.log("router.pathname?", router.pathname);
+        router.push(newPath);
+      };
     }
+    setTabs(newTabs);
+    
   };
 
   async function handleSystemCommonClick(props) {
-
-    const param = {upMenuId:props, connectHash:getConnectHash};
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/cm/cmsc01030000/selectList00`,{
-      method : 'POST',
-      cache:'no-store',
-      headers : {
-          'Content-Type' : 'application/json',
+    setIsLoading(true);
+    const param = { upMenuId: props, connectHash: getConnectHash };
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/cm/cmsc01030000/selectList00`, {
+      method: 'POST',
+      cache: 'no-store',
+      headers: {
+        'Content-Type': 'application/json',
       },
       data: JSON.stringify(param),
-      body : JSON.stringify({
-        upMenuId : props,connectHash: getConnectHash
+      body: JSON.stringify({
+        upMenuId: props, connectHash: getConnectHash
       })
     })
-    .then((response) => {
-      if(response.status === 200){
-        return response.json();
-      }else {
-        console.log('서버 에러 코드 전송 시 실행할 부분');
-      }
-    })
-    .then((result) => {
-      return result;
-    })
-    .catch((err) => {
-      console.log(err);
-    });
-    if (!res ||res === 0 || res.errMessage != null || !res.connectHash) {
-      console.log("========================res.errMessage=>>:{}",res.errMessage);
+      .then((response) => {
+        if (response.status === 200) {
+          return response.json();
+        } else {
+          console.log('서버 에러 코드 전송 시 실행할 부분');
+        }
+      })
+      .then((result) => {
+        return result;
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+    if (!res || res === 0 || res.errMessage != null || !res.connectHash) {
+      alert('세션 시간이 초과되었습니다. 다시로그인하세요.');
+      setIsLoading(false);
+      router.push('/');
+      console.log("========================res.errMessage=>>:{}", res.errMessage);
       return;
     }
     setSelectMenuList(res.dataList);
+    setIsLoading(false);
   }
 
   useEffect(() => {
-    // getConnectHash가 null이면 로그인 페이지로 리디렉션
     setMounted(true);
     handleSystemCommonClick("00000000000000000000");
-    //checkSessionValidity();
     localStorage.setItem('loginTime', currentTime);
     localStorage.setItem('connectHash', getConnectHash);
     const handleMouseMove = () => {
-      localStorage.setItem('loginTime', new Date().getTime());//마이스움직일때 로그인시간 업데이트
-      // console.log('마우스가 움직였습니다.');
+      localStorage.setItem('loginTime', new Date().getTime());
     };
     const handleKeyDown = (event) => {
-      localStorage.setItem('loginTime', new Date().getTime());//키보드 버튼 눌렸을때 로그인시간 업데이트
-      // console.log(`키보드 버튼 '${event.key}'가 눌렸습니다.`);
+      localStorage.setItem('loginTime', new Date().getTime());
     };
 
     window.addEventListener('mousemove', handleMouseMove);
@@ -212,13 +214,8 @@ export default function Layout({ children }) {
   return (mounted &&
     <Box sx={{ display: 'flex' }}>
       <CssBaseline />
-      {/* Navigation bar start */}
       <AppBar position="absolute" open={open}>
-        <Toolbar
-          sx={{
-            pr: '24px',
-          }}
-        >
+        <Toolbar sx={{ pr: '24px' }}>
           <IconButton
             edge="start"
             color="inherit"
@@ -237,7 +234,7 @@ export default function Layout({ children }) {
             </Badge>
           </IconButton>
           <Button onClick={handleLogout} color="inherit">
-            로그아웃 {logoutTime && `(${logoutTime})`} {/* 로그아웃 시간 표시 */}
+            로그아웃 {logoutTime && `(${logoutTime})`}
           </Button>
         </Toolbar>
       </AppBar>
@@ -256,9 +253,6 @@ export default function Layout({ children }) {
           </IconButton>
         </Toolbar>
         <Divider />
-        {/* 메뉴리스트 */}
-        {/* <Button onClick={() => handleSystemCommonClick("00000000000000000001")} color="inherit" sx={{ justifyContent: 'flex-start' }}>[시스템공통]</Button>
-        <Button onClick={() => handleSystemCommonClick("00000000000000000003")} color="inherit" sx={{ justifyContent: 'flex-start' }}>[시스템관리]</Button> */}
         <NestedList selectMenuList={selectMenuList} onMenuClick={handleMenuClick} />
       </Drawer>
 
@@ -269,41 +263,51 @@ export default function Layout({ children }) {
         <Container maxWidth="xl" sx={{ mt: 8, mb: 8 }}>
           <Grid container spacing={3}>
             <Grid item xs={12} md={8} lg={9}>
-              {/* mdi */}
               <Box sx={{ display: 'flex', height: '100vh' }}>
                 <Box sx={{ flexGrow: 1 }}>
-                  <Tabs
-                    value={currentTab === '/' || !currentTab ? 0 : currentTab}
-                    onChange={handleTabChange}
-                    aria-label="nav tabs example"
-                  >
-                    {tabs.map((tab) => (
-                      <LinkTab
-                        key={tab.path}
-                        label={
-                          <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                            {tab.label}
-                            <CloseIcon
-                              sx={{ ml: 1 }}
-                              onClick={(event) => handleTabClose(event, tab.path)}
-                            />
-                          </Box>
-                        }
-                        href={tab.path}
-                        value={tab.path}
-                      />
-                    ))}
-                    <Tab disabled label={`Tabs: ${tabs.length}/15`} />
-                  </Tabs>
-                  <Box sx={{ padding: 2 }}>
-                    {tabs.length === 0 ? (
-                      <Typography variant="h6">안녕하세요 사용자님 반갑읍니다.</Typography>
-                    ) : (
-                      <div key={currentTab}>
-                        {children}
-                      </div>
-                    )}
-                  </Box>
+                  {isLoading ? (
+                    <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+                      <CircularProgress />
+                    </Box>
+                  ) : (
+                    // MDI 구현
+                    <Tabs
+                      value={currentTab === '/' || currentTab.includes('null') || !currentTab ? 0 : currentTab}
+                      onChange={handleTabChange}
+                      aria-label="nav tabs example"
+                    >
+                      {tabs.map((tab) => (
+                        <LinkTab
+                          key={tab.path}
+                          label={
+                            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                              {tab.label}
+                              <CloseIcon
+                                sx={{ ml: 1 }}
+                                onClick={(event) => handleTabClose(event, tab.path)}
+                              />
+                            </Box>
+                          }
+                          
+                          value={tab.path}
+                        />
+                      ))}
+                      <Tab disabled label={`Tabs: ${tabs.length}/15`} />
+                    </Tabs>
+                  )}
+                  {!isLoading && (
+                    <Box sx={{ padding: 2 }}>
+                      {tabs.length === 0 ? (
+                        <Typography variant="h6">안녕하세요 사용자님 반갑읍니다.</Typography>
+                      ) : (
+                        tabs.map(tab => (
+                          <div key={tab.path} style={{display: currentTab === tab.path ? 'block' : 'none' }}>
+                            {children}
+                          </div>
+                        ))
+                      )}
+                    </Box>
+                  )}
                 </Box>
               </Box>
             </Grid>

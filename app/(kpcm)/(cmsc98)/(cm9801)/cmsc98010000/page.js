@@ -8,7 +8,7 @@ import CustomContainer from '@components/ContainerComponent/CustomContainer';
 import CustomBox from '@components/BoxComponent/CustomBox';
 import CustomButton from '@components/ButtonComponent/CustomButton';
 import CustomPageModal from '@components/ModalComponent/CustomPageModal';
-import CustomAutocomplete from '@components/AutocompleteComponent/CustomAutocomplete';
+//import CustomAutocomplete from '@components/AutocompleteComponent/CustomAutocomplete';
 import CustomSelect from '@components/SelectComponent/CustomSelect';
 import CustomMessageModal from '@components/ModalComponent/CustomMessageModal';
 
@@ -191,10 +191,7 @@ export default function Sys28010({ searchParams }) {
 				{ menuName}
       </Typography>
       <Box component="form" sx={{ mb: 4 }}>
-        <Grid CustomContainer spacing={2}>
-          <Grid item xs={10} sm={4} md={2}>
-            <CustomTextField label="오류메시지 코드아이디" variant="outlined" fullWidth />
-          </Grid>
+        <Grid container spacing={2}>
           <Grid item xs={12} sm={6} md={3}>
             <CustomTextField
               label="오류메시지 코드명"
@@ -204,6 +201,7 @@ export default function Sys28010({ searchParams }) {
               onChange={handleAgeChange}
             />
           </Grid>
+          {/* autocomplete 사용안한다고함 (24.06.10 그룹장님)
           <Grid item xs={12} sm={6} md={3}>
             <CustomAutocomplete
               options={dataList}
@@ -211,7 +209,7 @@ export default function Sys28010({ searchParams }) {
               onChange={handleCodeChange}
               label="오토컴플릿 샘플"
             />
-          </Grid>
+          </Grid> */}
           <Grid item xs={12} sm={6} md={3}>
             <CustomSelect
               label="선택"
@@ -220,8 +218,7 @@ export default function Sys28010({ searchParams }) {
               options={selectOptions}
               displayEmpty
               fullWidth
-            >
-            </CustomSelect>
+            />
           </Grid>
           <Grid item xs={12} sm={6} md={3}>
             <CustomButton
@@ -231,28 +228,29 @@ export default function Sys28010({ searchParams }) {
               onClick={handleSearch}
             >
               조회
-						</CustomButton>
-					</Grid>
-					<Grid item xs={12} sm={6} md={3}>
+            </CustomButton>
+          </Grid>
+        </Grid>
+        <Grid container spacing={2} sx={{ mt: 2 }}>
+          <Grid item xs={12} sm={6} md={3}>
             <CustomButton
               variant="contained"
               color="secondary"
               fullWidth
-							onClick={handleOpenModal}
-
+              onClick={handleOpenModal}
             >
               등록
-						</CustomButton>
-					</Grid>
-					<Grid item xs={12} sm={6} md={3}>
+            </CustomButton>
+          </Grid>
+          <Grid item xs={12} sm={6} md={3}>
             <CustomButton
               variant="contained"
               color="warning"
               fullWidth
-               onClick={handlePopoverOpen}
+              onClick={handlePopoverOpen}
             >
               변경
-						</CustomButton>
+            </CustomButton>
           </Grid>
         </Grid>
       </Box>
