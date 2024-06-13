@@ -40,7 +40,10 @@ function NestedList({ selectMenuList, onMenuClick }) {
               <ListItemIcon sx={{ cursor: 'pointer' }}>
                 <InboxIcon />
               </ListItemIcon>
-              <ListItemText primary={data.menuNm} />
+              <ListItemText
+                primary={data.menuNm}
+                sx={{ color: 'inherit'}}
+              />
               {openItems[data.menuId] ? <ExpandLess /> : <ExpandMore />}
             </ListItem>
           )}
@@ -50,7 +53,10 @@ function NestedList({ selectMenuList, onMenuClick }) {
                 <ListItemIcon sx={{ cursor: 'pointer' }}>
                   <InboxIcon />
                 </ListItemIcon>
-                <ListItemText primary={data.menuNm} />
+                <ListItemText
+                  primary={data.menuNm}
+                  sx={{ color: data.prgrmPath ? 'inherit' : 'red' }}
+                />
                 {!data.prgrmPath && (openItems[data.menuId] ? <ExpandLess /> : <ExpandMore />)}
               </ListItem>
             </Collapse>
@@ -62,7 +68,10 @@ function NestedList({ selectMenuList, onMenuClick }) {
                   <ListItemIcon sx={{ cursor: 'pointer' }}>
                     <StarBorder />
                   </ListItemIcon>
-                  <ListItemText primary={data.menuNm} />
+                  <ListItemText
+                    primary={data.menuNm}
+                    sx={{ color: data.prgrmPath ? 'inherit' : 'red' }}
+                  />
                 </ListItem>
               </List>
             </Collapse>

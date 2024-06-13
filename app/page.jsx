@@ -6,8 +6,8 @@ import { GlobalContext } from '../contexts/GlobalContext';
 import { fetcher } from '@apis/api';
 import { useSearchParams } from "next/navigation";
 import CustomMessageModal from '@components/ModalComponent/CustomMessageModal';
-import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import { useFormControl } from '@mui/material/FormControl';
+import CustomFormControl from '@components/TextFieldComponent/CustomFormControl';
 
 /**
  * @description: 로그인을 위한 화면.
@@ -136,56 +136,20 @@ const LoginPage = () => {
       emailRef.current.focus(); // 포커스 이동
       return;
     }
-    console.log("========================connectHash====================");
-    console.log(res.connectHash);
-    setConnectHash(res.connectHash);
-    //router.push('/main');
-    console.log('Routing to:', '/main', 'with query:', { connectHash: res.connectHash });
-    router.push('/main?connectHash='+res.connectHash);
+    //console.log("========================connectHash====================");
+    //console.log(res.connectHash);
+    //setConnectHash(res.connectHash);
+    router.push('/main');
+    //console.log('Routing to:', '/main', 'with query:', { connectHash: res.connectHash });
+    //router.push('/main?connectHash='+res.connectHash);
     return { props: { res } };
 
-  };
-
-  const handleEmailBlur = async () => {
-    if (!email) return;
-    
-    console.log("email 유효성검증 start!", email);
-    setEmailLoading(true);
-    
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    let isValid = emailRegex.test(email);
-
-    setTimeout(() => {
-      setEmailLoading(false);
-      setEmailValid(isValid);
-      if (isValid) {
-        console.log("email 유효성검증 성공!", email);
-      } else {
-        console.log("email 유효성검증 실패!", email);
-      }
-    }, 1000);
   };
 
   const handleCloseAlert = () => {
     setOpenAlert(false);
   };
 
-  function MyFormHelperText({ isValid, emailLoading, email }) {
-    const { focused } = useFormControl() || {};
-
-    const helperText = useMemo(() => {
-      if (!email || emailLoading) {
-        return null;
-      }
-    if (!isValid) {
-      return '이메일 형식이 올바르지 않습니다.';
-    }
-    return '';
-  }, [isValid, emailLoading, email]);
-
-    return <FormHelperText error={!isValid}>{helperText}</FormHelperText>;
-  }
-  
    return (
     <div style={{ position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
       {isLoading && (
@@ -201,32 +165,15 @@ const LoginPage = () => {
             </Typography>
           </Grid>
           <Grid item xs={12}>
-            <FormControl fullWidth margin="normal" variant="outlined" error={!!email && !emailValid}>
-              <OutlinedInput
-                type="email"
-                value={email}
-                inputRef={emailRef}
-                onChange={(e) => setEmail(e.target.value)}
-                onBlur={() => handleEmailBlur(email, setEmailLoading, setEmailValid)}
-                placeholder="이메일"
-                endAdornment={
-                  <InputAdornment position="end">
-                    {!emailLoading && email && emailValid && (
-                      <CheckCircleOutlineIcon sx={{ color: 'green' }} />
-                    )}
-                  </InputAdornment>
-                }
-              />
-              <MyFormHelperText isValid={emailValid} emailLoading={emailLoading} email={email} />
-            </FormControl>
-            {emailLoading && (
-              <Box sx={{ display: 'flex', justifyContent: 'left', ml: 1, mt: 1 }}>
-                 <CircularProgress size={16} />
-                   <Typography variant="body2" sx={{ ml: 1, color: '#2196f3' }}>
-                      Verification
-                    </Typography>
-               </Box>
-            )}
+            <CustomFormControl
+              email={email}
+              setEmail={setEmail}
+              emailValid={emailValid}
+              setEmailValid={setEmailValid}
+              emailLoading={emailLoading}
+              setEmailLoading={setEmailLoading}
+              emailRef={emailRef}
+            />
           </Grid>
           <Grid item xs={12}>
             <TextField

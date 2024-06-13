@@ -1,5 +1,6 @@
 "use client";
-import { useState, useEffect } from 'react';
+
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { styled } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -22,7 +23,6 @@ import CloseIcon from '@mui/icons-material/Close';
 import { useSearchParams } from "next/navigation";
 import { format } from 'date-fns';
 import CircularProgress from '@mui/material/CircularProgress';
-import { tabsState, currentTabState } from '../../app/common/state'; 
 
 const drawerWidth = 300;
 
@@ -79,7 +79,7 @@ function LinkTab(props) {
   );
 }
 
-export default function Layout({ children }) {
+const LayoutWrapper = ({ children }) => {
   const searchParams = useSearchParams();
   const getConnectHash = searchParams.get("connectHash");
   const currentTime = new Date().getTime();
@@ -110,7 +110,10 @@ export default function Layout({ children }) {
     }
   };
 
-  setInterval(checkSessionValidity, 5 * 60 * 100000);
+  useEffect(() => {
+    const interval = setInterval(checkSessionValidity, 5 * 60 * 100000);
+    return () => clearInterval(interval);
+  }, []);
 
   const toggleDrawer = () => {
     setOpen(!open);
@@ -141,7 +144,6 @@ export default function Layout({ children }) {
       const newPath = newTabs.length > 0 ? newTabs[0].path : `/main?connectHash=${getConnectHash}`;
       setCurrentTab(newPath);
       if (router.pathname !== newPath) {
-        console.log("router.pathname?", router.pathname);
         router.push(newPath);
       }
     }
@@ -176,10 +178,7 @@ export default function Layout({ children }) {
         console.log(err);
       });
     if (!res || res === 0 || res.errMessage != null || !res.connectHash) {
-      //alert('세션 시간이 초과되었습니다. 다시 로그인하세요.');
       setIsLoading(false);
-      //router.push('/');
-      //console.log("========================res.errMessage=>>:{}", res.errMessage);
       return;
     }
     setSelectMenuList(res.dataList);
@@ -207,108 +206,111 @@ export default function Layout({ children }) {
     };
   }, []);
 
-  return (mounted &&
-    <Box sx={{ display: 'flex' }}>
-      <CssBaseline />
-      <AppBar position="absolute" open={open}>
-        <Toolbar sx={{ pr: '24px' }}>
-          <IconButton
-            edge="start"
-            color="inherit"
-            aria-label="open drawer"
-            onClick={toggleDrawer}
+  return (
+    mounted && (
+      <Box sx={{ display: 'flex' }}>
+        <CssBaseline />
+        <AppBar position="absolute" open={open}>
+          <Toolbar sx={{ pr: '24px' }}>
+            <IconButton
+              edge="start"
+              color="inherit"
+              aria-label="open drawer"
+              onClick={toggleDrawer}
+              sx={{
+                marginRight: '36px',
+                ...(open && { display: 'none' }),
+              }}
+            >
+              <MenuIcon />
+            </IconButton>
+            <IconButton color="inherit">
+              <Badge badgeContent={4} color="secondary">
+                <NotificationsIcon />
+              </Badge>
+            </IconButton>
+            <Button onClick={handleLogout} color="inherit">
+              로그아웃 {logoutTime && `(${logoutTime})`}
+            </Button>
+          </Toolbar>
+        </AppBar>
+
+        <Drawer variant="permanent" open={open}>
+          <Toolbar
             sx={{
-              marginRight: '36px',
-              ...(open && { display: 'none' }),
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'flex-end',
+              px: [1],
             }}
           >
-            <MenuIcon />
-          </IconButton>
-          <IconButton color="inherit">
-            <Badge badgeContent={4} color="secondary">
-              <NotificationsIcon />
-            </Badge>
-          </IconButton>
-          <Button onClick={handleLogout} color="inherit">
-            로그아웃 {logoutTime && `(${logoutTime})`}
-          </Button>
-        </Toolbar>
-      </AppBar>
+            <IconButton onClick={toggleDrawer}>
+              <ChevronLeftIcon />
+            </IconButton>
+          </Toolbar>
+          <Divider />
+          <NestedList selectMenuList={selectMenuList} onMenuClick={handleMenuClick} />
+        </Drawer>
 
-      <Drawer variant="permanent" open={open}>
-        <Toolbar
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'flex-end',
-            px: [1],
-          }}
+        <Box
+          component="main"
+          sx={{ flexGrow: 1, bgcolor: 'background.default', p: 3 }}
         >
-          <IconButton onClick={toggleDrawer}>
-            <ChevronLeftIcon />
-          </IconButton>
-        </Toolbar>
-        <Divider />
-        <NestedList selectMenuList={selectMenuList} onMenuClick={handleMenuClick} />
-      </Drawer>
-
-      <Box
-        component="main"
-        sx={{ flexGrow: 1, bgcolor: 'background.default', p: 3 }}
-      >
-        <Container maxWidth="lg" sx={{ mt: 8, mb: 8, ml: 2 }}>
-          <Grid container spacing={3}>
-            <Grid item xs={12} md={8} lg={9}>
-              <Box sx={{ display: 'flex', height: '100vh' }}>
-                <Box sx={{ flexGrow: 1 }}>
-                  {isLoading ? (
-                    <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-                      <CircularProgress />
-                    </Box>
-                  ) : (
-                    // MDI 구현
-                    <Tabs
-                      value={currentTab === '/' || currentTab.includes('null') || !currentTab ? 0 : currentTab}
-                      onChange={handleTabChange}
-                      aria-label="nav tabs example"
-                    >
-                      {tabs.map((tab) => (
-                        <LinkTab
-                          key={tab.path}
-                          label={
-                            <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                              {tab.label}
-                              <CloseIcon
-                                sx={{ ml: 1 }}
-                                onClick={(event) => handleTabClose(event, tab.path)}
-                              />
-                            </Box>
-                          }
-                          value={tab.path}
-                        />
-                      ))}
-                      <Tab disabled label={`Tabs: ${tabs.length}/15`} />
-                    </Tabs>
-                  )}
-                  {!isLoading && (
-                    <Box sx={{ padding: 2 }}>
-                      {tabs.length === 0 ? (
-                        <Typography variant="h6">안녕하세요 사용자님 반갑읍니다.</Typography>
-                      ) : (
-                        tabs.map(tab => (
-                          <div key={tab.path} style={{ display: currentTab === tab.path ? 'block' : 'none' }}>
-                            {children}
-                          </div>
-                        ))
-                      )}
-                    </Box>
-                  )}
+          <Container maxWidth="lg" sx={{ mt: 8, mb: 8, ml: 2 }}>
+            <Grid container spacing={3}>
+              <Grid item xs={12} md={8} lg={9}>
+                <Box sx={{ display: 'flex', height: '100vh' }}>
+                  <Box sx={{ flexGrow: 1 }}>
+                    {isLoading ? (
+                      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+                        <CircularProgress />
+                      </Box>
+                    ) : (
+                      <Tabs
+                        value={currentTab === '/' || currentTab.includes('null') || !currentTab ? 0 : currentTab}
+                        onChange={handleTabChange}
+                        aria-label="nav tabs example"
+                      >
+                        {tabs.map((tab) => (
+                          <LinkTab
+                            key={tab.path}
+                            label={
+                              <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                                {tab.label}
+                                <CloseIcon
+                                  sx={{ ml: 1 }}
+                                  onClick={(event) => handleTabClose(event, tab.path)}
+                                />
+                              </Box>
+                            }
+                            value={tab.path}
+                          />
+                        ))}
+                        <Tab disabled label={`Tabs: ${tabs.length}/15`} />
+                      </Tabs>
+                    )}
+                    {!isLoading && (
+                      <Box sx={{ padding: 2 }}>
+                        {tabs.length === 0 ? (
+                          <Typography variant="h6">안녕하세요 사용자님 반갑읍니다.</Typography>
+                        ) : (
+                          tabs.map(tab => (
+                            <div key={tab.path} style={{ display: currentTab === tab.path ? 'block' : 'none' }}>
+                              {children}
+                            </div>
+                          ))
+                        )}
+                      </Box>
+                    )}
+                  </Box>
                 </Box>
-              </Box>
+              </Grid>
             </Grid>
-          </Grid>
-        </Container>
+          </Container>
+        </Box>
       </Box>
-    </Box>
+    )
   );
-}
+};
+
+export default React.memo(LayoutWrapper);

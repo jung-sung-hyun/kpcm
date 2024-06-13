@@ -9,6 +9,14 @@ import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import FormHelperText from '@mui/material/FormHelperText';
 import { useFormControl } from '@mui/material/FormControl';
 
+/**
+ * @description: 이메일 유효성 검증을 수행하는 함수
+ * @function handleEmailBlur
+ * @param {string} email - 검증할 이메일 주소
+ * @param {function} setEmailLoading - 이메일 로딩 상태를 설정하는 함수
+ * @param {function} setEmailValid - 이메일 유효성 상태를 설정하는 함수
+ * @returns {void}
+ */
 const handleEmailBlur = async (email, setEmailLoading, setEmailValid) => {
   if (!email) return;
 
@@ -29,6 +37,14 @@ const handleEmailBlur = async (email, setEmailLoading, setEmailValid) => {
   }, 1000);
 };
 
+/**
+ * @description: 이메일 유효성 상태에 따라 도움말 텍스트를 표시하는 컴포넌트
+ * @function MyFormHelperText
+ * @param {boolean} isValid - 이메일 유효성 상태
+ * @param {boolean} emailLoading - 이메일 로딩 상태
+ * @param {string} email - 현재 이메일 값
+ * @returns {JSX.Element} - 이메일 유효성 검증 결과에 따른 도움말 텍스트
+ */
 const MyFormHelperText = ({ isValid, emailLoading, email }) => {
   const { focused } = useFormControl() || {};
 
@@ -45,6 +61,18 @@ const MyFormHelperText = ({ isValid, emailLoading, email }) => {
   return <FormHelperText error={!isValid}>{helperText}</FormHelperText>;
 };
 
+/**
+ * @description: 커스텀 FormControl 컴포넌트
+ * @function CustomFormControl
+ * @param {string} email - 현재 이메일 값
+ * @param {function} setEmail - 이메일 값을 설정하는 함수
+ * @param {boolean} emailValid - 이메일 유효성 상태
+ * @param {function} setEmailValid - 이메일 유효성 상태를 설정하는 함수
+ * @param {boolean} emailLoading - 이메일 로딩 상태
+ * @param {function} setEmailLoading - 이메일 로딩 상태를 설정하는 함수
+ * @param {object} emailRef - 이메일 input의 참조 객체
+ * @returns {JSX.Element} - 커스텀 FormControl 컴포넌트
+ */
 const CustomFormControl = ({
   email,
   setEmail,

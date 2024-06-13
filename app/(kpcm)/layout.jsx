@@ -1,6 +1,12 @@
+import { useMemo } from 'react';
 import LayoutWrapper from '@components/LayoutWrapper/LayoutWrapper';
-export default function Layout({ children }) {
-  return <LayoutWrapper>
-    {children}
-  </LayoutWrapper>
-}
+
+const Layout = ({ children }) => {
+  const memoizedChildren = useMemo(() => {
+    return children;
+  }, [children]);
+
+  return <LayoutWrapper>{memoizedChildren}</LayoutWrapper>;
+};
+
+export default Layout;

@@ -39,6 +39,7 @@ export default function Csmc98010000({ searchParams }) {
   const [helperText, setHelperText] = useState('');
   const [isDisabled, setIsDisabled] = useState(false);
   const [selectedDate, setSelectedDate] = useState('2023-01-01');
+  const [selectedValues, setSelectedValues] = useState('');
 
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [fileNames, setFileNames] = useState([]);
@@ -136,10 +137,25 @@ export default function Csmc98010000({ searchParams }) {
     }
   };
 
-  const selectOptions = [
-    { value: 'male', label: 'Male' },
-    { value: 'female', label: 'Female' },
+  const options = [
+    { value: 'option1', label: '옵션 1' },
+    { value: 'option2', label: '옵션 2' },
+    { value: 'option3', label: '옵션 3' },
   ];
+
+  const handleChange = (event) => {
+    const value = event.target.value;
+    setSelectedValues(value);
+
+    // 유효성 체크 로직
+    if (value === '') {
+      setError(true);
+      setHelperText('값을 선택해주세요.');
+    } else {
+      setError(false);
+      setHelperText('');
+    }
+  };
 
   return (
     <CustomContainer>
@@ -296,12 +312,15 @@ export default function Csmc98010000({ searchParams }) {
           </Grid> */}
           <Grid item xs={12} sm={6} md={3}>
             {/* <CustomSelect
-              label="오류메시지 코드명"
-              value={selectedSampleCode}
-              onChange={handleCodeChange}
-              options={selectOptions}
+              label="옵션 선택"
+              value={selectedValues}
+              onChange={handleChange}
+              options={options}
               displayEmpty
               fullWidth
+              error={error}
+              helperText={helperText}
+              multiple={true} 
             /> */}
           </Grid>
         </Grid>
