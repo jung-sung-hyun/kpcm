@@ -1,4 +1,10 @@
-import { Select, MenuItem, InputLabel, FormControl, FormHelperText, OutlinedInput } from '@mui/material';
+import OutlinedInput from '@mui/material/OutlinedInput';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import ListItemText from '@mui/material/ListItemText';
+import Select from '@mui/material/Select';
+import Checkbox from '@mui/material/Checkbox';
 
 /**
  * @description: 공통 Select 컴포넌트를 정의한다.
@@ -22,42 +28,48 @@ import { Select, MenuItem, InputLabel, FormControl, FormHelperText, OutlinedInpu
  *   2024.06.12       박대철                                  최초작성
  * ========================================================================================================
  */
-const CustomSelect = ({
-  label,
-  value,
-  onChange,
-  options,
-  displayEmpty = false,
-  fullWidth = false,
-  error = false,
-  helperText = '',
-  multiple = false,
-}) => {
+
+const ITEM_HEIGHT = 48;
+const ITEM_PADDING_TOP = 8;
+const MenuProps = {
+  PaperProps: {
+    style: {
+      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+      width: 250,
+    },
+  },
+};
+
+export default function CustomSelect({ label, options, selectedOptions, setSelectedOptions, width = 300 }) {
+  const handleChange = (event) => {
+    const {
+      target: { value },
+    } = event;
+    setSelectedOptions(
+      typeof value === 'string' ? value.split(',') : value,
+    );
+  };
+
   return (
-    <FormControl fullWidth={fullWidth} error={error}>
-      <InputLabel>{label}</InputLabel>
+    <FormControl sx={{ m: 1, width }}>
+      <InputLabel id="custom-multiple-checkbox-label">{label}</InputLabel>
       <Select
-        value={value}
-        onChange={onChange}
-        displayEmpty={displayEmpty}
-        label={label}
-        multiple={multiple}
+        labelId="custom-multiple-checkbox-label"
+        id="custom-multiple-checkbox"
+        multiple
+        value={selectedOptions}
+        onChange={handleChange}
         input={<OutlinedInput label={label} />}
+        renderValue={(selected) => selected.join(', ')}
+        MenuProps={MenuProps}
       >
-        {displayEmpty && !multiple && (
-          <MenuItem value="">
-            <em>선택</em>
-          </MenuItem>
-        )}
         {options.map((option) => (
-          <MenuItem key={option.value} value={option.value}>
-            {option.label}
+          <MenuItem key={option} value={option}>
+            <Checkbox checked={selectedOptions.indexOf(option) > -1} />
+            <ListItemText primary={option} />
           </MenuItem>
         ))}
       </Select>
-      {helperText && <FormHelperText>{helperText}</FormHelperText>}
     </FormControl>
   );
-};
-
-export default CustomSelect;
+}

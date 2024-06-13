@@ -123,6 +123,7 @@ const LoginPage = () => {
         setIsLoading(false);
         // 인터넷 문제로 실패 시 실행할 부분
         console.log("===================1====>>>err: ", err);
+        router.push('/exception/network-error');
         return err;
       });
 

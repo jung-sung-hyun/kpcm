@@ -40,6 +40,8 @@ export default function Csmc98010000({ searchParams }) {
   const [isDisabled, setIsDisabled] = useState(false);
   const [selectedDate, setSelectedDate] = useState('2023-01-01');
   const [selectedValues, setSelectedValues] = useState('');
+  const [personName, setPersonName] = useState([]);
+
 
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [fileNames, setFileNames] = useState([]);
@@ -137,10 +139,17 @@ export default function Csmc98010000({ searchParams }) {
     }
   };
 
-  const options = [
-    { value: 'option1', label: '옵션 1' },
-    { value: 'option2', label: '옵션 2' },
-    { value: 'option3', label: '옵션 3' },
+  const names = [
+    'Oliver Hansen',
+    'Van Henry',
+    'April Tucker',
+    'Ralph Hubbard',
+    'Omar Alexander',
+    'Carlos Abbott',
+    'Miriam Wagner',
+    'Bradley Wilkerson',
+    'Virginia Andrews',
+    'Kelly Snyder',
   ];
 
   const handleChange = (event) => {
@@ -311,17 +320,12 @@ export default function Csmc98010000({ searchParams }) {
             />
           </Grid> */}
           <Grid item xs={12} sm={6} md={3}>
-            {/* <CustomSelect
-              label="옵션 선택"
-              value={selectedValues}
-              onChange={handleChange}
-              options={options}
-              displayEmpty
-              fullWidth
-              error={error}
-              helperText={helperText}
-              multiple={true} 
-            /> */}
+           <CustomSelect
+              label="Tag"
+              options={names}
+              selectedOptions={personName}
+              setSelectedOptions={setPersonName}
+            />
           </Grid>
         </Grid>
         <Grid container spacing={2} sx={{ mt: 2 }}>
