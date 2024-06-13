@@ -1,3 +1,4 @@
+import { useState, useMemo } from 'react';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
@@ -5,29 +6,10 @@ import FormControl from '@mui/material/FormControl';
 import ListItemText from '@mui/material/ListItemText';
 import Select from '@mui/material/Select';
 import Checkbox from '@mui/material/Checkbox';
-
-/**
- * @description: 공통 Select 컴포넌트를 정의한다.
- * @function CustomSelect
- * @param {string} label - Select의 레이블을 나타낸다.
- * @param {string|Array} value - Select의 현재 값을 나타낸다. 다중 선택일 경우 배열 형태로 전달된다.
- * @param {function} onChange - Select의 값이 변경될 때 호출되는 이벤트 핸들러 함수.
- * @param {Array} options - Select에 표시할 옵션 목록을 나타낸다. 각 옵션은 객체 형태로 { value: string, label: string }을 포함한다.
- * @param {boolean} [displayEmpty=false] - true로 설정하면 빈 값이 표시될 수 있도록 한다.
- * @param {boolean} [fullWidth=false] - true로 설정하면 Select가 전체 너비를 차지한다.
- * @param {boolean} [error=false] - Select에 에러 상태를 설정한다. 에러 상태일 경우 빨간색으로 표시된다.
- * @param {string} [helperText=''] - Select 아래에 표시할 도움말 텍스트를 설정한다.
- * @param {boolean} [multiple=false] - true로 설정하면 다중 선택이 가능하다.
- * @returns {JSX.Element} - 커스텀 Select 컴포넌트를 반환한다.
- * 
- * ========================================================================================================
- *                                    수정 이력관리 (형상관리에도 Copy 반영)
- * --------------------------------------------------------------------------------------------------------
- *      수정일        수정자                                  수정내용
- * --------------------------------------------------------------------------------------------------------
- *   2024.06.12       박대철                                  최초작성
- * ========================================================================================================
- */
+import FormHelperText from '@mui/material/FormHelperText';
+import CircularProgress from '@mui/material/CircularProgress';
+import Typography from '@mui/material/Typography';
+import Box from '@mui/material/Box';
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -40,18 +22,72 @@ const MenuProps = {
   },
 };
 
-export default function CustomSelect({ label, options, selectedOptions, setSelectedOptions, width = 300 }) {
+/**
+ * @description: 선택된 옵션이 유효한지 확인하는 함수
+ * @function validateSelection
+ * @param {array} selectedOptions - 선택된 옵션 배열
+ * @returns {boolean} - 선택된 옵션이 유효한지 여부
+ */
+const validateSelection = (selectedOptions) => {
+  // 여기에 유효성 검사를 위한 논리를 추가합니다.
+  // 예시로, 선택된 옵션의 수가 최소 1개 이상이어야 한다는 검사를 추가합니다.
+  return selectedOptions.length > 0;
+};
+
+/**
+ * @description: 선택된 옵션이 유효한지에 따라 도움말 텍스트를 표시하는 컴포넌트
+ * @function MyFormHelperText
+ * @param {boolean} isValid - 선택된 옵션이 유효한지 여부
+ * @param {boolean} loading - 로딩 상태
+ * @param {array} selectedOptions - 선택된 옵션 배열
+ * @returns {JSX.Element} - 유효성 검사 결과에 따른 도움말 텍스트
+ */
+const MyFormHelperText = ({ isValid, loading, selectedOptions }) => {
+  const helperText = useMemo(() => {
+    if (loading) {
+      return '검증 중...';
+    }
+    if (!isValid) {
+      return '하나 이상의 옵션을 선택해야 합니다.';
+    }
+    return '';
+  }, [isValid, loading, selectedOptions]);
+
+  return <FormHelperText error={!isValid}>{helperText}</FormHelperText>;
+};
+
+/**
+ * @description: 커스텀 다중 선택 체크박스 컴포넌트
+ * @function CustomSelect
+ * @param {string} label - 선택 항목의 레이블
+ * @param {array} options - 선택할 옵션 배열
+ * @param {array} selectedOptions - 선택된 옵션 배열
+ * @param {function} setSelectedOptions - 선택된 옵션 배열을 설정하는 함수
+ * @param {number} width - 컴포넌트의 너비 (기본값: 300)
+ * @returns {JSX.Element} - 커스텀 다중 선택 체크박스 컴포넌트
+ */
+const CustomSelect = ({ label, options, selectedOptions, setSelectedOptions, width = 300 }) => {
+  const [loading, setLoading] = useState(false);
+  const [isValid, setIsValid] = useState(true);
+
   const handleChange = (event) => {
     const {
       target: { value },
     } = event;
-    setSelectedOptions(
-      typeof value === 'string' ? value.split(',') : value,
-    );
+    const newValue = typeof value === 'string' ? value.split(',') : value;
+    setSelectedOptions(newValue);
+
+    // 유효성 검사 시작
+    setLoading(true);
+    setTimeout(() => {
+      const valid = validateSelection(newValue);
+      setIsValid(valid);
+      setLoading(false);
+    }, 1000); // 유효성 검사를 1초 동안 시뮬레이션
   };
 
   return (
-    <FormControl sx={{ m: 1, width }}>
+    <FormControl sx={{ m: 1, width }} error={!isValid}>
       <InputLabel id="custom-multiple-checkbox-label">{label}</InputLabel>
       <Select
         labelId="custom-multiple-checkbox-label"
@@ -70,6 +106,17 @@ export default function CustomSelect({ label, options, selectedOptions, setSelec
           </MenuItem>
         ))}
       </Select>
+      <MyFormHelperText isValid={isValid} loading={loading} selectedOptions={selectedOptions} />
+      {loading && (
+        <Box sx={{ display: 'flex', justifyContent: 'left', ml: 1, mt: 1 }}>
+          <CircularProgress size={16} />
+          <Typography variant="body2" sx={{ ml: 1, color: '#2196f3' }}>
+            Verification
+          </Typography>
+        </Box>
+      )}
     </FormControl>
   );
-}
+};
+
+export default CustomSelect;

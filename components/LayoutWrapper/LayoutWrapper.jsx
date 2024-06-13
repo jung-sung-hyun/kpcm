@@ -258,7 +258,7 @@ const LayoutWrapper = ({ children }) => {
         >
           <Container maxWidth="lg" sx={{ mt: 8, mb: 8, ml: 2 }}>
             <Grid container spacing={3}>
-              <Grid item xs={12} md={8} lg={9}>
+              <Grid item xs={12}>
                 <Box sx={{ display: 'flex', height: '100vh' }}>
                   <Box sx={{ flexGrow: 1 }}>
                     {isLoading ? (

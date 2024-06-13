@@ -10,6 +10,7 @@ import InboxIcon from '@mui/icons-material/MoveToInbox';
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
 import StarBorder from '@mui/icons-material/StarBorder';
+import { Typography } from '@mui/material';
 
 // navigation 메뉴 목록
 function NestedList({ selectMenuList, onMenuClick }) {
@@ -41,7 +42,9 @@ function NestedList({ selectMenuList, onMenuClick }) {
                 <InboxIcon />
               </ListItemIcon>
               <ListItemText
-                primary={data.menuNm}
+                primary={<Typography noWrap>
+                          {data.menuNm}
+                         </Typography>}
                 sx={{ color: 'inherit'}}
               />
               {openItems[data.menuId] ? <ExpandLess /> : <ExpandMore />}
@@ -54,7 +57,9 @@ function NestedList({ selectMenuList, onMenuClick }) {
                   <InboxIcon />
                 </ListItemIcon>
                 <ListItemText
-                  primary={data.menuNm}
+                   primary={<Typography noWrap>
+                             {data.menuNm}
+                            </Typography>}
                   sx={{ color: data.prgrmPath ? 'inherit' : 'red' }}
                 />
                 {!data.prgrmPath && (openItems[data.menuId] ? <ExpandLess /> : <ExpandMore />)}

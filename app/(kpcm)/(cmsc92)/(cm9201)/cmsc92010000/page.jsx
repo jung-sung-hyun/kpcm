@@ -16,22 +16,6 @@ import { codeNmState } from '../../../../common/state';
 import dayjs from 'dayjs';
 import DeleteIcon from '@mui/icons-material/Delete';
 
-/**
- * @description: 오류메시지코드 관리를 위한 화면.
- * @function Csmc98010000
- * @param {string} errCd - 선택 항목의 레이블
- * @returns
- * 변경이 있을 때에는 수정 이력에 변경일자와 변경자, 그리고 변경사유를 기록하여 관리가 되도록 한다.
- * ========================================================================================================
- *                                    수정 이력관리 (형상관리에도 Copy 반영)
- * --------------------------------------------------------------------------------------------------------
- *      수정일        수정자                                  수정내용
- * --------------------------------------------------------------------------------------------------------
- *   2024.05.15       정성현                                  최초작성
- *   2024.06.13       박대철                     컴포넌트 유효성체크 공통화 작업
- * ========================================================================================================
- */
-
 const columns = [
   { field: 'id', headerName: '순번', width: 90 },
   { field: 'codeId', headerName: '오류메시지 코드아이디', width: 200, editable: true },
@@ -45,7 +29,7 @@ const rows = [
   { id: 3, name: 'Michael Brown', age: 35, city: 'Chicago' },
 ];
 
-export default function Csmc98010000({ searchParams }) {
+export default function Cmsc92010000({ searchParams }) {
   const [dataList, setDataList] = useState([]);
   const [selectedSampleCode, setSelectedSampleCode] = useState(null);
   const [openModal, setOpenModal] = useState(false);
@@ -257,43 +241,115 @@ export default function Csmc98010000({ searchParams }) {
       </Typography>
       <Box component="form" sx={{ mb: 4 }}>
         <Grid container spacing={2}>
-            <Grid item xs={12} sm={6} md={3}>
-              <CustomTextField
-                label="오류코드(선택)"
-                value={codeNm}
-                variant="outlined"
-                error={error}
-                helperText={helperText}
-                onChange={handleInputChange}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6} md={9} container justifyContent="flex-end" spacing={2}>
-              <Grid item>
-                <CustomButton
-                  variant="outlined"
-                  color="primary"
-                  fullWidth
-                  size="large"
-                  onClick={handleSearch}
-                  disabled={isDisabled}
-                >
-                  초기화
-                </CustomButton>
-              </Grid>
-              <Grid item>
-                <CustomButton
-                  variant="contained"
-                  color="primary"
-                  fullWidth
-                  size="large"
-                  onClick={handleSearch}
-                  disabled={isDisabled}
-                >
-                  조회
-                </CustomButton>
-              </Grid>
-            </Grid>
+          <Grid item xs={12} sm={6} md={3}>
+            <CustomDatePicker
+              label="조회시작일자"
+              defaultValue="2023-01-01"
+              controlled={true}
+              disabled={false}
+              minDate="1901-01-01"
+              maxDate="2030-12-31"
+              onChange={handleDateChange}
+            />
           </Grid>
+          <Grid item xs={12} sm={6} md={3}>
+            <CustomDatePicker
+              label="조회종료일자"
+              defaultValue="2023-01-01"
+              controlled={true}
+              disabled={false}
+              minDate="1901-01-01"
+              maxDate="2030-12-31"
+              onChange={handleDateChange}
+            />
+          </Grid>
+          <Grid item xs={12} sm={6} md={3}>
+            <CustomTextField
+              label="오류메시지 코드명"
+              value={codeNm}
+              variant="outlined"
+              error={error}
+              helperText={helperText}
+              onChange={handleInputChange}
+            />
+          </Grid>
+          <Grid item xs={12} sm={6} md={3}>
+             <CustomButton
+                variant="contained"
+                color="primary"
+                fullWidth
+                size="medium"
+                onClick={handleSearch}
+                disabled={isDisabled}
+              >
+              조회
+            </CustomButton>
+          </Grid>
+          <Grid item xs={12} sm={6} md={3}>
+            <CustomFileUploader
+              onDrop={handleFileDrop}
+              multiple={true}
+              maxFiles={5}
+              buttonLabel="파일 선택"
+              sx={{ width: '200px', height: '50px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}
+            />
+            {fileNames.length > 0 && (
+              <Box>
+                <Typography variant="body1">Selected files:</Typography>
+                 {fileNames.map((name, index) => (
+                    <Box key={index} display="flex" alignItems="center" justifyContent="space-between" sx={{ mt: 1 }}>
+                      <Typography variant="body2">{name}</Typography>
+                      <IconButton onClick={() => handleRemoveFile(name)} color="secondary">
+                        <DeleteIcon />
+                      </IconButton>
+                    </Box>
+                  ))}
+              </Box>
+            )}
+            <CustomButton variant="contained" color="primary" onClick={handleUpload}>
+              Upload File
+            </CustomButton>
+          </Grid>
+          {/* autocomplete 사용안한다고함 (24.06.10 그룹장님)
+          <Grid item xs={12} sm={6} md={3}>
+            <CustomAutocomplete
+              options={dataList}
+              value={selectedSampleCode}
+              onChange={handleCodeChange}
+              label="오토컴플릿 샘플"
+            />
+          </Grid> */}
+          <Grid item xs={12} sm={6} md={3}>
+           <CustomSelect
+              label="Tag"
+              options={names}
+              selectedOptions={personName}
+              setSelectedOptions={setPersonName}
+            />
+          </Grid>
+        </Grid>
+        <Grid container spacing={2} sx={{ mt: 2 }}>
+          <Grid item xs={12} sm={6} md={3}>
+            <CustomButton
+              variant="contained"
+              color="secondary"
+              fullWidth
+              onClick={handleOpenModal}
+            >
+              등록
+            </CustomButton>
+          </Grid>
+          <Grid item xs={12} sm={6} md={3}>
+            <CustomButton
+              variant="contained"
+              color="warning"
+              fullWidth
+              onClick={handlePopoverOpen}
+            >
+              변경
+            </CustomButton>
+          </Grid>
+        </Grid>
       </Box>
       <Box sx={{ height: 400, width: '100%' }}>
         <DataGrid
