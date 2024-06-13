@@ -1,1 +1,1 @@
-프로젝트 백엔드 repository
+프로젝트 프론트엔드 repository
