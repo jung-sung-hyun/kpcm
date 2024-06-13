@@ -1,11 +1,13 @@
 "use client";
-import { useState, useRef, useContext, useEffect } from 'react';
+import { useMemo, useState, useRef, useContext, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Container, TextField, Button, Typography, Grid, CircularProgress } from '@mui/material';
+import { Container, TextField, Button, Typography, Grid, CircularProgress, Box, FormControl, OutlinedInput, FormHelperText, InputAdornment } from '@mui/material';
 import { GlobalContext } from '../contexts/GlobalContext';
 import { fetcher } from '@apis/api';
 import { useSearchParams } from "next/navigation";
 import CustomMessageModal from '@components/ModalComponent/CustomMessageModal';
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
+import { useFormControl } from '@mui/material/FormControl';
 
 /**
  * @description: 로그인을 위한 화면.
@@ -19,7 +21,7 @@ import CustomMessageModal from '@components/ModalComponent/CustomMessageModal';
  *      수정일        수정자                                  수정내용
  * --------------------------------------------------------------------------------------------------------
  *   2024.05.15       정성현                                  최초작성
- *   2024.05.16       홍길동                     Method 수정 및 추가 작업
+ *   2024.06.13       박대철                     컴포넌트 유효성체크 공통화 작업
  * ========================================================================================================
  */
 const LoginPage = () => {
@@ -30,12 +32,14 @@ const LoginPage = () => {
 
   const [openAlert, setOpenAlert] = useState(false);
   const [alertMessage, setAlertMessage] = useState('이메일과 비밀번호를 입력해주세요.');
-  const emailRef = useRef(null); // 참조 생성
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [emailLoading, setEmailLoading] = useState(false);
+  const [emailValid, setEmailValid] = useState(true); 
+  const emailRef = useRef(null); // 참조 생성
   const { globalState, setGlobalState } = useContext(GlobalContext);
   const searchParams = useSearchParams();
   const getConnectHash = searchParams.get('connectHash');
+
   useEffect(() => {
     const connectHash = localStorage.getItem('connectHash');
     const logOut = async () => {
@@ -77,34 +81,6 @@ const LoginPage = () => {
     }
 
     setIsLoading(true); // 로딩 상태 시작
-
-    // try {
-    //   const res = await fetcher('cm/cmsc01020000/select00', { mbrEmlAddr: email, userPswd: password }, router);
-    //   console.log('Authentication success', res);
-    //   // 성공 시 실행할 추가 작업
-    //   setIsLoading(false);
-    //   console.log("========================connectHash====================: ", res.connectHash);
-    //   setConnectHash(res.connectHash);
-    //   // setGlobalState((prevState) => ({
-    //   //   ...prevState,
-    //   //   user: { name: 'test user', email: email, useHashCode: res.connectHash },
-    //   // }));
-    //   console.log('Routing to:', '/main', 'with query:', { connectHash: res.connectHash });
-    //   router.push('/main?connectHash=' + res.connectHash);
-    // } catch (err) {
-    //   // 실패 시 실행할 부분
-    //   console.error("=======================>err: ", err);
-    //   setAlertMessage(err.message);
-    //   setIsLoading(false);
-    //   if (!res || res === 0 || res.errMessage != null || !res.connectHash) {
-    //     console.log("========================res.errMessage =======error in=============");
-    //     setAlertMessage(res.errMessage);
-    //     setOpenAlert(true);
-    //     emailRef.current.focus(); // 포커스 이동
-    //     console.log("========================res.errMessage =1==2=======43==========", res.errMessage);
-    //     return;
-    //   }
-    // }
 
     const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/cm/cmsc01020000/select00`, {
       cache: 'no-store',
@@ -152,10 +128,6 @@ const LoginPage = () => {
 
       console.log("res: ");
       console.log(res);
-      // setGlobalState((prevState) => ({
-      //   ...prevState,
-      //   user: { name: 'teest user', email: email , useHashCode: res.connectHash},
-      // }));
     // 실패 시 실행할 부분
     if (!res ||res === 0 || res.errMessage != null || !res.connectHash) {
       console.log("========================res.errMessage =======error in============={}",res.errMessage);
@@ -167,17 +139,53 @@ const LoginPage = () => {
     console.log("========================connectHash====================");
     console.log(res.connectHash);
     setConnectHash(res.connectHash);
-    // router.push('/main');
+    //router.push('/main');
     console.log('Routing to:', '/main', 'with query:', { connectHash: res.connectHash });
     router.push('/main?connectHash='+res.connectHash);
     return { props: { res } };
 
   };
 
+  const handleEmailBlur = async () => {
+    if (!email) return;
+    
+    console.log("email 유효성검증 start!", email);
+    setEmailLoading(true);
+    
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    let isValid = emailRegex.test(email);
+
+    setTimeout(() => {
+      setEmailLoading(false);
+      setEmailValid(isValid);
+      if (isValid) {
+        console.log("email 유효성검증 성공!", email);
+      } else {
+        console.log("email 유효성검증 실패!", email);
+      }
+    }, 1000);
+  };
+
   const handleCloseAlert = () => {
     setOpenAlert(false);
   };
 
+  function MyFormHelperText({ isValid, emailLoading, email }) {
+    const { focused } = useFormControl() || {};
+
+    const helperText = useMemo(() => {
+      if (!email || emailLoading) {
+        return null;
+      }
+    if (!isValid) {
+      return '이메일 형식이 올바르지 않습니다.';
+    }
+    return '';
+  }, [isValid, emailLoading, email]);
+
+    return <FormHelperText error={!isValid}>{helperText}</FormHelperText>;
+  }
+  
    return (
     <div style={{ position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
       {isLoading && (
@@ -188,27 +196,37 @@ const LoginPage = () => {
       <Container maxWidth="sm" style={{ opacity: isLoading ? 0.5 : 1 }}>
         <Grid container spacing={2} justifyContent="center" alignItems="center">
           <Grid item xs={12}>
-            <Typography variant="h4" align="center" gutterBottom>
+            <Typography variant="h5" align="center" gutterBottom>
               한국조폐공사 결제플랫폼 로그인
             </Typography>
           </Grid>
           <Grid item xs={12}>
-            <TextField
-              fullWidth
-              label="이메일"
-              variant="outlined"
-              type="email"
-              autoFocus
-              margin="normal"
-              value={email}
-              inputRef={emailRef}
-              onChange={(e) => setEmail(e.target.value)}
-              InputProps={{
-                onFocus: (e) => e.target.placeholder = '',
-                onBlur: (e) => e.target.placeholder = '이메일',
-              }}
-              placeholder="이메일"
-            />
+            <FormControl fullWidth margin="normal" variant="outlined" error={!!email && !emailValid}>
+              <OutlinedInput
+                type="email"
+                value={email}
+                inputRef={emailRef}
+                onChange={(e) => setEmail(e.target.value)}
+                onBlur={() => handleEmailBlur(email, setEmailLoading, setEmailValid)}
+                placeholder="이메일"
+                endAdornment={
+                  <InputAdornment position="end">
+                    {!emailLoading && email && emailValid && (
+                      <CheckCircleOutlineIcon sx={{ color: 'green' }} />
+                    )}
+                  </InputAdornment>
+                }
+              />
+              <MyFormHelperText isValid={emailValid} emailLoading={emailLoading} email={email} />
+            </FormControl>
+            {emailLoading && (
+              <Box sx={{ display: 'flex', justifyContent: 'left', ml: 1, mt: 1 }}>
+                 <CircularProgress size={16} />
+                   <Typography variant="body2" sx={{ ml: 1, color: '#2196f3' }}>
+                      Verification
+                    </Typography>
+               </Box>
+            )}
           </Grid>
           <Grid item xs={12}>
             <TextField

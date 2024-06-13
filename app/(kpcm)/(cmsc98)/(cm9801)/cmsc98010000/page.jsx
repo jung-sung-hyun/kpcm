@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
-import { Box, Grid, MenuItem, Typography } from '@mui/material';
+import { Box, Grid, MenuItem, Typography, IconButton } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 import CustomTextField from '@components/TextFieldComponent/CustomTextField';
 import CustomPopover from '@components/PopoverComponent/CustomPopover';
@@ -11,8 +11,10 @@ import CustomButton from '@components/ButtonComponent/CustomButton';
 import CustomPageModal from '@components/ModalComponent/CustomPageModal';
 import CustomSelect from '@components/SelectComponent/CustomSelect';
 import CustomDatePicker from '@components/DatePickerComponent/CustomDatePicker';
+import CustomFileUploader from '@components/FileUploaderComponent/CustomFileUploader';
 import { codeNmState } from '../../../../common/state';
 import dayjs from 'dayjs';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 const columns = [
   { field: 'id', headerName: '순번', width: 90 },
@@ -27,7 +29,7 @@ const rows = [
   { id: 3, name: 'Michael Brown', age: 35, city: 'Chicago' },
 ];
 
-export default function Sys28010({ searchParams }) {
+export default function Csmc98010000({ searchParams }) {
   const [dataList, setDataList] = useState([]);
   const [selectedSampleCode, setSelectedSampleCode] = useState(null);
   const [openModal, setOpenModal] = useState(false);
@@ -37,6 +39,48 @@ export default function Sys28010({ searchParams }) {
   const [helperText, setHelperText] = useState('');
   const [isDisabled, setIsDisabled] = useState(false);
   const [selectedDate, setSelectedDate] = useState('2023-01-01');
+
+  const [selectedFiles, setSelectedFiles] = useState([]);
+  const [fileNames, setFileNames] = useState([]);
+
+  const handleFileDrop = (acceptedFiles) => {
+    const newFiles = [...selectedFiles, ...acceptedFiles];
+    if (newFiles.length > 5) {
+      alert('You can only upload up to 5 files.');
+      return;
+    }
+    setSelectedFiles(newFiles);
+    setFileNames(newFiles.map(file => file.name));
+  };
+
+  const handleUpload = async () => {
+    console.log("파일업로드 성공!");
+    if (!selectedFile) return;
+    
+    /*
+    const formData = new FormData();
+    formData.append('file', selectedFile);
+
+    try {
+      const response = await axios.post('/api/upload', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      console.log('File uploaded successfully:', response.data);
+    } catch (error) {
+      console.error('Error uploading file:', error);
+    }
+    */
+  };
+
+  const handleRemoveFile = (fileName) => {
+    
+    const newFiles = selectedFiles.filter(file => file.name !== fileName);
+    console.log("파일삭제: ", newFiles);
+    setSelectedFiles(newFiles);
+    setFileNames(newFiles.map(file => file.name));
+  };
 
   const handleDateChange = (newDate) => {
     console.log('Selected date:', newDate.format('YYYY-MM-DD'));
@@ -204,25 +248,6 @@ export default function Sys28010({ searchParams }) {
               onChange={handleInputChange}
             />
           </Grid>
-          {/* autocomplete 사용안한다고함 (24.06.10 그룹장님)
-          <Grid item xs={12} sm={6} md={3}>
-            <CustomAutocomplete
-              options={dataList}
-              value={selectedSampleCode}
-              onChange={handleCodeChange}
-              label="오토컴플릿 샘플"
-            />
-          </Grid> */}
-          <Grid item xs={12} sm={6} md={3}>
-            <CustomSelect
-              label="오류메시지 코드명"
-              value={selectedSampleCode}
-              onChange={handleCodeChange}
-              options={selectOptions}
-              displayEmpty
-              fullWidth
-            />
-          </Grid>
           <Grid item xs={12} sm={6} md={3}>
              <CustomButton
                 variant="contained"
@@ -234,6 +259,50 @@ export default function Sys28010({ searchParams }) {
               >
               조회
             </CustomButton>
+          </Grid>
+          <Grid item xs={12} sm={6} md={3}>
+            <CustomFileUploader
+              onDrop={handleFileDrop}
+              multiple={true}
+              maxFiles={5}
+              buttonLabel="파일 선택"
+              sx={{ width: '200px', height: '50px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}
+            />
+            {fileNames.length > 0 && (
+              <Box>
+                <Typography variant="body1">Selected files:</Typography>
+                 {fileNames.map((name, index) => (
+                    <Box key={index} display="flex" alignItems="center" justifyContent="space-between" sx={{ mt: 1 }}>
+                      <Typography variant="body2">{name}</Typography>
+                      <IconButton onClick={() => handleRemoveFile(name)} color="secondary">
+                        <DeleteIcon />
+                      </IconButton>
+                    </Box>
+                  ))}
+              </Box>
+            )}
+            <CustomButton variant="contained" color="primary" onClick={handleUpload}>
+              Upload File
+            </CustomButton>
+          </Grid>
+          {/* autocomplete 사용안한다고함 (24.06.10 그룹장님)
+          <Grid item xs={12} sm={6} md={3}>
+            <CustomAutocomplete
+              options={dataList}
+              value={selectedSampleCode}
+              onChange={handleCodeChange}
+              label="오토컴플릿 샘플"
+            />
+          </Grid> */}
+          <Grid item xs={12} sm={6} md={3}>
+            {/* <CustomSelect
+              label="오류메시지 코드명"
+              value={selectedSampleCode}
+              onChange={handleCodeChange}
+              options={selectOptions}
+              displayEmpty
+              fullWidth
+            /> */}
           </Grid>
         </Grid>
         <Grid container spacing={2} sx={{ mt: 2 }}>
