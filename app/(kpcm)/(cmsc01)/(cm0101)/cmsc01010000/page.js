@@ -33,7 +33,8 @@ import { DataGrid } from '@mui/x-data-grid';
   const param = {idx:idx};
   const [boardList   , setDataList   ] = useState();
 
-  async function initfresh(){
+   async function initfresh() {
+     console.log('조회@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@');
     const res = await  fetch(`${process.env.NEXT_PUBLIC_API_URL}/cm/cmsc01010000/selectList00`,{
       method : 'POST',
       cache:'no-store',

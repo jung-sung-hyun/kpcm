@@ -32,6 +32,7 @@ const CustomTextField = ({ label, value, variant, error = false, helperText = ''
     helperText={helperText}
     onChange={onChange}
     fullWidth
+    InputLabelProps={{ shrink: !!value || undefined }} 
   />
 );
 

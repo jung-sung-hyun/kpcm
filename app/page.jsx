@@ -8,6 +8,8 @@ import { useSearchParams } from "next/navigation";
 import CustomMessageModal from '@components/ModalComponent/CustomMessageModal';
 import { useFormControl } from '@mui/material/FormControl';
 import CustomFormControl from '@components/TextFieldComponent/CustomFormControl';
+import useAlert from '@hooks/useAlert';
+import './common/common';
 
 /**
  * @description: 로그인을 위한 화면.
@@ -30,8 +32,6 @@ const LoginPage = () => {
   const [password, setPassword] = useState('');
   const [connectHash, setConnectHash] = useState('');
 
-  const [openAlert, setOpenAlert] = useState(false);
-  const [alertMessage, setAlertMessage] = useState('이메일과 비밀번호를 입력해주세요.');
   const [isLoading, setIsLoading] = useState(false);
   const [emailLoading, setEmailLoading] = useState(false);
   const [emailValid, setEmailValid] = useState(true); 
@@ -39,6 +39,13 @@ const LoginPage = () => {
   const { globalState, setGlobalState } = useContext(GlobalContext);
   const searchParams = useSearchParams();
   const getConnectHash = searchParams.get('connectHash');
+  const {
+    openAlert,
+    alertMessage,
+    handleOpenAlert,
+    handleCloseAlert,
+    setOpenAlert,
+  } = useAlert();
 
   useEffect(() => {
     const connectHash = localStorage.getItem('connectHash');
@@ -69,14 +76,18 @@ const LoginPage = () => {
     verifySecurity();
   }, [router]);
 
+  const handleConfirmAlert = () => {
+    console.log("도착!!");
+    handleCloseAlert();
+  };
+
   const handleLogin = async (env) => {
     console.log("========================env====================", env);
     console.log("========================email====", email);
     console.log("========================password====", password);
     // 이메일과 비밀번호가 입력되었는지 확인
     if (!email || !password) {
-      setAlertMessage("이메일과 비밀번호를 입력해주세요.");
-      setOpenAlert(true);
+      handleOpenAlert('이메일과 비밀번호를 입력해주세요.');
       return;
     }
 
@@ -147,10 +158,6 @@ const LoginPage = () => {
 
   };
 
-  const handleCloseAlert = () => {
-    setOpenAlert(false);
-  };
-
    return (
     <div style={{ position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
       {isLoading && (
@@ -206,19 +213,10 @@ const LoginPage = () => {
         </Grid>
         <CustomMessageModal
           open={openAlert}
-          onClose={handleCloseAlert}
-          content={
-            <>
-              <Typography gutterBottom>
-                {alertMessage}
-              </Typography>
-            </>
-          }
-          actions={
-            <Button autoFocus onClick={handleCloseAlert}>
-              닫기
-            </Button>
-          }
+          setOpen={setOpenAlert}
+          message={alertMessage}
+          onConfirm={handleConfirmAlert}
+          showCancelButton={false}
         />
       </Container>
     </div>

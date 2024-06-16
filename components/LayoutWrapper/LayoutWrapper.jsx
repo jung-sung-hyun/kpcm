@@ -249,6 +249,8 @@ const LayoutWrapper = ({ children }) => {
             </IconButton>
           </Toolbar>
           <Divider />
+
+          {/* 메뉴목록 리스트  */}
           <NestedList selectMenuList={selectMenuList} onMenuClick={handleMenuClick} />
         </Drawer>
 
@@ -296,6 +298,7 @@ const LayoutWrapper = ({ children }) => {
                         ) : (
                           tabs.map(tab => (
                             <div key={tab.path} style={{ display: currentTab === tab.path ? 'block' : 'none' }}>
+                              {/* 메뉴 페이지 */}
                               {children}
                             </div>
                           ))

@@ -1,61 +1,46 @@
-import * as React from 'react';
-import { Button, Dialog, DialogTitle, DialogContent, DialogActions, IconButton, Typography } from '@mui/material';
-import { styled } from '@mui/material/styles';
-import CloseIcon from '@mui/icons-material/Close';
+import { Modal, Typography, Button, Box } from '@mui/material';
 
-const BootstrapDialog = styled(Dialog)(({ theme }) => ({
-  '& .MuiDialogContent-root': {
-    padding: theme.spacing(2),
-  },
-  '& .MuiDialogActions-root': {
-    padding: theme.spacing(1),
-  },
-}));
+const CustomMessageModal = ({ open, setOpen, message, onConfirm, showCancelButton = true, confirmLabel = "확인", cancelLabel = "취소" }) => {
+  const handleClose = () => setOpen(false);
 
-const CustomDialogContent = styled(DialogContent)(({ theme }) => ({
-  paddingTop: theme.spacing(20),
-  paddingBottom: theme.spacing(20),
-}));
-
-const CustomDialogTitle = styled(DialogTitle)(({ theme }) => ({
-  marginBottom: theme.spacing(20),
-  paddingRight: theme.spacing(5),
-}));
-
-const CustomMessageModal = ({ title, content, open, onClose, onOpen, actions }) => {
   return (
-    <React.Fragment>
-      {/* <Button variant="outlined" onClick={onOpen}>
-        Open dialog
-      </Button> */}
-      <BootstrapDialog
-        onClose={onClose}
-        aria-labelledby="customized-dialog-title"
-        open={open}
+    <Modal
+      open={open}
+      onClose={handleClose}
+      aria-labelledby="modal-title"
+      aria-describedby="modal-description"
+    >
+      <Box
+        sx={{
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          width: 400,
+          bgcolor: 'background.paper',
+          border: '2px solid #000',
+          boxShadow: 24,
+          p: 4,
+        }}
       >
-        <CustomDialogTitle sx={{ m: 0, p: 3 }} id="customized-dialog-title">
-          {title}
-          <IconButton
-            aria-label="close"
-            onClick={onClose}
-            sx={{
-              position: 'absolute',
-              right: 8,
-              top: 8,
-              color: (theme) => theme.palette.grey[500],
-            }}
-          >
-            <CloseIcon />
-          </IconButton>
-        </CustomDialogTitle>
-        <CustomDialogContent dividers>
-          {content}
-        </CustomDialogContent>
-        <DialogActions>
-          {actions}
-        </DialogActions>
-      </BootstrapDialog>
-    </React.Fragment>
+        <Typography id="modal-title" variant="h6" component="h2">
+          알림
+        </Typography>
+        <Typography id="modal-description" sx={{ mt: 2 }}>
+          {message}
+        </Typography>
+        <Box sx={{ mt: 3, display: 'flex', justifyContent: 'flex-end' }}>
+          {showCancelButton && (
+            <Button onClick={handleClose} color="primary">
+              {cancelLabel}
+            </Button>
+          )}
+          <Button onClick={onConfirm} color="primary" autoFocus>
+            {confirmLabel}
+          </Button>
+        </Box>
+      </Box>
+    </Modal>
   );
 };
 
