@@ -6,7 +6,7 @@ export const fetcher = async (url, param) => {
     const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/${url}`, {
       method: 'POST',
       //cache: 'no-store',
-      cache: 'no-store',
+      cache: 'default',
       headers: {
         'Content-Type': 'application/json',
       },

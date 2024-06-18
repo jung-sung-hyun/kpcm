@@ -24,7 +24,7 @@ function NestedList({ selectMenuList, onMenuClick }) {
     }));
 
     if (data.prgrmPath) {
-      onMenuClick(data.menuNm, data.prgrmPath);
+      onMenuClick(data.menuNm, data.prgrmPath, data.menuId);
     }
   };
 

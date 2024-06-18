@@ -109,6 +109,7 @@ const LoginPage = () => {
 
       // 성공 시 수행
       setConnectHash(data.connectHash);
+      localStorage.setItem('connectHash', data.connectHash);
       router.push('/main');
       setIsLoading(false);
       return { props: { data } };

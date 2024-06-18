@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import NestedList from '../../components/NestedList';
+import { fetcher } from '@apis/api';
 import Main from '../../app/(kpcm)/(cmsc00)/main/page';
 import { styled } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -81,8 +82,8 @@ function LinkTab(props) {
 }
 
 const LayoutWrapper = ({ children }) => {
-  const searchParams = useSearchParams();
-  const getConnectHash = searchParams.get("connectHash");
+  //const searchParams = useSearchParams();
+  //const getConnectHash = searchParams.get("connectHash");
   const currentTime = new Date().getTime();
 
   const [open, setOpen] = useState(true);
@@ -120,7 +121,7 @@ const LayoutWrapper = ({ children }) => {
     setOpen(!open);
   };
 
-  const handleMenuClick = (label, path) => {
+  const handleMenuClick = async (label, path, menuId) => {
     if (tabs.length > 10) {
       alert('최대 열람가능한 탭 개수는 10개입니다.');
       return;
@@ -128,6 +129,21 @@ const LayoutWrapper = ({ children }) => {
     if (!tabs.find(tab => tab.path === path)) {
       setTabs([...tabs, { label, path }]);
     }
+
+    // API 호출
+    const url = 'cm/cmsc00000000/selectList00';
+    const param = { connectHash: localStorage.getItem('connectHash'), menuId: menuId };
+
+    try {
+      const res = await fetcher(url, param);
+      if (!res || res === 0 || res.errMessage != null) {
+        return;
+      }
+      console.log("버튼 목록 조회 res: ", res);
+    } catch (error) {
+        console.error('API 호출 중 오류 발생: ', error);
+    }
+
     setCurrentTab(path);
     router.push(path);
   };
@@ -142,7 +158,7 @@ const LayoutWrapper = ({ children }) => {
     const newTabs = tabs.filter(tab => tab.path !== path);
 
     if (currentTab === path) {
-      const newPath = newTabs.length > 0 ? newTabs[0].path : `/main?connectHash=${getConnectHash}`;
+      const newPath = newTabs.length > 0 ? newTabs[0].path : `/main`;
       setCurrentTab(newPath);
       if (router.pathname !== newPath) {
         router.push(newPath);
@@ -153,43 +169,29 @@ const LayoutWrapper = ({ children }) => {
 
   async function handleSystemCommonClick(props) {
     setIsLoading(true);
-    const param = { upMenuId: props, connectHash: getConnectHash };
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/cm/cmsc01030000/selectList00`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      data: JSON.stringify(param),
-      body: JSON.stringify({
-        upMenuId: props, connectHash: getConnectHash
-      })
-    })
-      .then((response) => {
-        if (response.status === 200) {
-          return response.json();
-        } else {
-          console.log('서버 에러 코드 전송 시 실행할 부분');
-        }
-      })
-      .then((result) => {
-        return result;
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-    if (!res || res === 0 || res.errMessage != null || !res.connectHash) {
+
+    // API 호출
+    const url = 'cm/cmsc01030000/selectList00';
+    const param = { upMenuId: props, connectHash: localStorage.getItem('connectHash') };
+
+    try {
+      const res = await fetcher(url, param);
+      if (!res || res === 0 || res.errMessage != null) {
+        setIsLoading(false);
+        return;
+      }
+      setSelectMenuList(res.dataList);
       setIsLoading(false);
-      return;
+    } catch (error) {
+        console.error('API 호출 중 오류 발생: ', error);
     }
-    setSelectMenuList(res.dataList);
-    setIsLoading(false);
   }
 
   useEffect(() => {
     setMounted(true);
     handleSystemCommonClick("00000000000000000000");
     localStorage.setItem('loginTime', currentTime);
-    localStorage.setItem('connectHash', getConnectHash);
+    //localStorage.setItem('connectHash', getConnectHash);
     const handleMouseMove = () => {
       localStorage.setItem('loginTime', new Date().getTime());
     };
