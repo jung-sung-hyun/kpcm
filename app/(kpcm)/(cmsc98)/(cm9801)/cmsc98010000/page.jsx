@@ -6,8 +6,8 @@ import { DataGrid, GridToolbarContainer } from '@mui/x-data-grid';
 import CustomTextField from '@components/TextFieldComponent/CustomTextField';
 import CustomContainer from '@components/ContainerComponent/CustomContainer';
 import CustomButton from '@components/ButtonComponent/CustomButton';
-import { cm98010000CodeNm, cm98010000DataGrid, cm98010000RowCount } from '../../../../common/state';
-import { fetcher } from '../../../../../apis/api';
+import { cm98010000CodeNm, cm98010000DataGrid, cm98010000RowCount } from '../../../../common/(state)/(cmsc98)/state';
+import { fetcher } from '@apis/api';
 import useAlert from '@hooks/useAlert';
 import CustomMessageModal from '@components/ModalComponent/CustomMessageModal';
 
@@ -110,12 +110,11 @@ export default function Csmc98010000({ searchParams }) {
 
   // 조회 버튼 클릭 이벤트
   const handleSearch = async () => {
-    // API 호출 시 필요한 URL과 파라미터 정의
+    // API 호출
     const url = 'cm/cmsc98010000/select00';
     const param = {
       msgCd: codeNm,
     };
-    // fetcher 함수 호출
     try {
       const data = await fetcher(url, param);
       const updatedDataList = data.dataList.map((row) => ({
@@ -215,7 +214,7 @@ export default function Csmc98010000({ searchParams }) {
           <Grid item xs={12} sm={6} md={3}>
             <CustomTextField
               label="오류코드(선택)"
-              value={codeNm}
+              value={codeNm?codeNm:''}
               variant="outlined"
               onChange={changeErrInput}
             />

@@ -2,6 +2,8 @@
 
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import NestedList from '../../components/NestedList';
+import Main from '../../app/(kpcm)/(cmsc00)/main/page';
 import { styled } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import MuiDrawer from '@mui/material/Drawer';
@@ -17,7 +19,6 @@ import Grid from '@mui/material/Grid';
 import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import NotificationsIcon from '@mui/icons-material/Notifications';
-import NestedList from '../../components/NestedList';
 import { Tabs, Tab, Typography } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import { useSearchParams } from "next/navigation";
@@ -155,7 +156,6 @@ const LayoutWrapper = ({ children }) => {
     const param = { upMenuId: props, connectHash: getConnectHash };
     const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/cm/cmsc01030000/selectList00`, {
       method: 'POST',
-      cache: 'no-store',
       headers: {
         'Content-Type': 'application/json',
       },
@@ -294,7 +294,7 @@ const LayoutWrapper = ({ children }) => {
                     {!isLoading && (
                       <Box sx={{ padding: 2 }}>
                         {tabs.length === 0 ? (
-                          <Typography variant="h6">안녕하세요 사용자님 반갑읍니다.</Typography>
+                          <Main/>
                         ) : (
                           tabs.map(tab => (
                             <div key={tab.path} style={{ display: currentTab === tab.path ? 'block' : 'none' }}>
@@ -316,4 +316,4 @@ const LayoutWrapper = ({ children }) => {
   );
 };
 
-export default React.memo(LayoutWrapper);
+export default LayoutWrapper;

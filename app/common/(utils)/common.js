@@ -1,4 +1,4 @@
-import { fetcher } from '../../apis/api';
+import { fetcher } from '../../../apis/api';
   
 export const getCommonCode = async (info) => {
   let param = [];

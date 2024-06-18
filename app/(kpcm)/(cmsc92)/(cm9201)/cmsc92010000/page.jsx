@@ -12,7 +12,7 @@ import CustomPageModal from '@components/ModalComponent/CustomPageModal';
 import CustomSelect from '@components/SelectComponent/CustomSelect';
 import CustomDatePicker from '@components/DatePickerComponent/CustomDatePicker';
 import CustomFileUploader from '@components/FileUploaderComponent/CustomFileUploader';
-import { codeNmState } from '../../../../common/state';
+import { codeNmState } from '../../../../common/(state)/(cmsc98)/state';
 import dayjs from 'dayjs';
 import DeleteIcon from '@mui/icons-material/Delete';
 

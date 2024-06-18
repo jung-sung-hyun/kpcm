@@ -1,4 +1,3 @@
-// pages/404.js
 "use client";
 import React from 'react';
 import { Container, Typography, Button, Box } from '@mui/material';

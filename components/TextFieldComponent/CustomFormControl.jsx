@@ -20,7 +20,6 @@ import { useFormControl } from '@mui/material/FormControl';
 const handleEmailBlur = async (email, setEmailLoading, setEmailValid) => {
   if (!email) return;
 
-  console.log("email 유효성검증 start!", email);
   setEmailLoading(true);
 
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -100,14 +99,16 @@ const CustomFormControl = ({
         }
       />
       <MyFormHelperText isValid={emailValid} emailLoading={emailLoading} email={email} />
-      {email && emailLoading && (
-        <Box sx={{ display: 'flex', justifyContent: 'left', ml: 1, mt: 1 }}>
-          <CircularProgress size={16} />
-          <Typography variant="body2" sx={{ ml: 1, color: '#2196f3' }}>
-            Verification
-          </Typography>
-        </Box>
-      )}
+      <Box sx={{ display: 'flex', justifyContent: 'left', ml: 1, mt: 1, height: 6 }}>
+        {email && emailLoading ? (
+          <>
+            <CircularProgress size={16} />
+            <Typography variant="body2" sx={{ ml: 1, color: '#2196f3' }}>
+              Verification
+            </Typography>
+          </>
+        ) : null}
+      </Box>
     </FormControl>
   );
 };

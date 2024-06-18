@@ -1,10 +1,7 @@
 "use client"
 import { useRouter } from "next/navigation";
 import {useEffect, useState} from 'react';
-import {
-    TextField
-   ,Button
-} from '@mui/material';
+import { TextField, Button, Stack } from '@mui/material';
 import { Result } from "postcss";
 /**
  * @description: 신규버튼의 선택을 게시글을 작성 저정한다.
@@ -47,8 +44,7 @@ export default  function Cmsc01010001(props) {
         await fetch(`${process.env.NEXT_PUBLIC_API_URL}/cm/cmsc01010001/insert00`, option)
             .then(res => res.json())
             .then(result => {
-                // router.push('/kpcm/cm01/cm0101/selectBoardList/1').then(() => window.location.reload());
-                router.push('/cm0101mq0/1');
+                router.push('/cmsc01010000', undefined, { shallow: true });
                 router.refresh();
             })
             .catch(error => {
@@ -58,12 +54,21 @@ export default  function Cmsc01010001(props) {
 
      return (
         <form onSubmit={handleSubmit}>
-          <h2>insert!!</h2>
-             <p>
-             <Button variant="contained" type="submit">저장</Button>
-             </p>
-            <TextField id="title" name="title" label="제목을 입력하세요."   onChange={e=>setTitle(e.target.value)} value={title} type="text" inputProps={inputProps} fullWidth />
-            <p></p>
+            <Stack direction="row" spacing={2} alignItems="center">
+                <TextField
+                    id="title"
+                    name="title"
+                    label="제목을 입력하세요."
+                    onChange={e => setTitle(e.target.value)}
+                    value={title}
+                    type="text"
+                    inputProps={inputProps}
+                    size="small"
+                    sx={{ width: '400px' }}
+                />
+                <Button variant="contained" type="submit">저장</Button>
+            </Stack>
+            <br/>
             <TextField
              id="contents"
              name="contents"

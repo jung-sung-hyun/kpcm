@@ -5,6 +5,7 @@ export const fetcher = async (url, param) => {
   try {
     const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/${url}`, {
       method: 'POST',
+      //cache: 'no-store',
       cache: 'no-store',
       headers: {
         'Content-Type': 'application/json',
@@ -18,17 +19,18 @@ export const fetcher = async (url, param) => {
       return data;
     } else if (res.status === 400) {
       console.log('400 Error');
-      //router.push('../app/common/(exception)/400error');
+      window.location.href = '../app/common/(exception)/400error';
     } else if (res.status === 500 || res.status === 501) {
       console.log('500, 501 Error');
-      //router.push('../app/common/(exception)/400error');
+      window.location.href = '../app/common/(exception)/500error';
     } else {
       console.log('ETC failed');
-      //router.push('../app/common/(exception)/network-error');
+      window.location.href = '../app/common/(exception)/network-error';
     }
   } catch (error) {
     console.error('Error: ', error);
-    //router.push('../app/common/(exception)/network-error');
+    alert(`시스템 에러: ${error}`);
+    //window.location.href = '../app/common/(exception)/network-error';
     //throw error;
   }
 };

@@ -24,50 +24,31 @@ import { DataGrid } from '@mui/x-data-grid';
  *      수정일        수정자                                  수정내용
  * --------------------------------------------------------------------------------------------------------
  *   2024.05.15       정성현                                  최초작성
- *   2024.05.16       홍길동                     Method 수정및 추가작업
  * ========================================================================================================
  */
  export default function Cmsc01010000(props) {
-
-  const idx = props.params.id;
-  const param = {idx:idx};
-  const [boardList   , setDataList   ] = useState();
+   const [boardList   , setDataList   ] = useState();
+   const idx = props.params.id;
 
    async function initfresh() {
-     console.log('조회@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@');
-    const res = await  fetch(`${process.env.NEXT_PUBLIC_API_URL}/cm/cmsc01010000/selectList00`,{
-      method : 'POST',
-      cache:'no-store',
-      headers : {
-          'Content-Type' : 'application/json',
-      },
-      data: JSON.stringify(param),
-      body : JSON.stringify({
-        idx : idx,
-      })
-    })
-    .then((response) => {
-      if(response.status === 200){
-        return response.json();
-      }else {
-        // 서버 에러 코드 전송 시 실행할 부분
-      }
-    })
-    .then((result) => {
-      // 성공 시 실행할 부분
-      return result;
-    })
-    .catch((err) => {
-      // 인터넷 문제로 실패 시 실행할 부분
-      console.log(err);
-    });
-    setDataList(res);
-  };
+    // API 호출
+    const url = 'cm/cmsc01010000/selectList00';
+    const param = {
+      idx : idx,
+    };
+    try {
+      const data = await fetcher(url, param);
+      setDataList(data.datalist);
+    } catch (error) {
+      console.error('API 호출 중 오류 발생: ', error);
+     }
+   };
+   
   useEffect((event)=>{
-    //event.preventDefault();
     initfresh();
   }, []);
 
+   console.log("boardList: ", boardList);
   if (!boardList) {
     console.log('==================================================error');
     return;
