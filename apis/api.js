@@ -8,6 +8,8 @@ export const fetcher = async (url, param) => {
       //cache: 'no-store',
       cache: 'default',
       headers: {
+
+        
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(param),

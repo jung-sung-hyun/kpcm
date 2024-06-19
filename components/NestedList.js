@@ -14,6 +14,8 @@ import { Typography } from '@mui/material';
 
 // navigation 메뉴 목록
 function NestedList({ selectMenuList, onMenuClick }) {
+
+  
   const [openItems, setOpenItems] = useState({});
   const router = useRouter();
 
